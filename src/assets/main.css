@@ -1,0 +1,173 @@
+/* SleepNote — global base styles, diary fill patterns, and print rules. */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #1f2937;
+  background: #f8fafc;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+/*
+ * Diary slot fill patterns.
+ * Each state is visually distinct even when printed in black & white:
+ *   sleep        = solid
+ *   awake in bed = diagonal hatch
+ *   sleepiness   = dots
+ */
+.fill-sleep {
+  background-color: #1f2937;
+}
+
+.fill-awakeInBed {
+  background-color: #dbeafe;
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0,
+    transparent 3px,
+    #1e3a8a 3px,
+    #1e3a8a 4px
+  );
+}
+
+.fill-sleepiness {
+  background-color: #fef3c7;
+  background-image: radial-gradient(circle, #92400e 1.2px, transparent 1.6px);
+  background-size: 5px 5px;
+}
+
+.fill-sleep,
+.fill-awakeInBed,
+.fill-sleepiness {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+:root {
+  --diary-label-col: 3rem;
+  --diary-cols: 48;
+}
+
+/* Swatch used in the toolbar and legend. */
+.swatch {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: 1px solid #9ca3af;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+
+.swatch--empty {
+  background-color: #ffffff;
+}
+
+/* --- Diary board layout -------------------------------------------------- */
+/* The header row and every day row share the same column grid. */
+
+.diary-board {
+  overflow-x: auto;
+  user-select: none;
+  touch-action: none;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.diary-row {
+  display: grid;
+  grid-template-columns: var(--diary-label-col) repeat(var(--diary-cols), minmax(16px, 1fr));
+}
+
+.diary-label {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 4px;
+  font-size: 0.7rem;
+  background: #f9fafb;
+  border-right: 1px solid #d1d5db;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.diary-hour {
+  grid-column: span 2;
+  padding: 2px 0;
+  text-align: center;
+  font-size: 0.62rem;
+  color: #6b7280;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  border-bottom: 1px solid #d1d5db;
+}
+
+/* --- Slot cell ----------------------------------------------------------- */
+
+.slot-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 18px;
+  border-right: 1px solid #f3f4f6;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.slot-cell--hour {
+  border-right-color: #d1d5db;
+}
+
+.slot-cell__icon {
+  width: 12px;
+  height: 12px;
+  color: #111827;
+  pointer-events: none;
+}
+
+/* --- Print rules --------------------------------------------------------- */
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 10mm;
+  }
+
+  body {
+    background: #ffffff;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .diary-board {
+    overflow: visible;
+    border: none;
+  }
+
+  .diary-row {
+    grid-template-columns: var(--diary-label-col) repeat(var(--diary-cols), minmax(0, 1fr));
+  }
+
+  .slot-cell {
+    height: 20px;
+  }
+}
