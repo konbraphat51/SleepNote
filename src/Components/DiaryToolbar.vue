@@ -15,6 +15,8 @@ export default {
       state,
       changeMonth,
       goToToday,
+      undo,
+      redo,
       setActiveTool,
       setLanguage,
       exportJson,
@@ -72,6 +74,8 @@ export default {
       monthTitle,
       changeMonth,
       goToToday,
+      undo,
+      redo,
       setActiveTool,
       setLanguage,
       isActive,
@@ -95,6 +99,11 @@ export default {
       <span class="toolbar__month">{{ monthTitle(state.viewYear, state.viewMonth) }}</span>
       <button class="toolbar__btn" :title="t('nextMonth')" @click="changeMonth(1)">›</button>
       <button class="toolbar__btn" @click="goToToday">{{ t('today') }}</button>
+    </div>
+
+    <div class="toolbar__group">
+      <button class="toolbar__btn" :disabled="!state.canUndo" @click="undo">{{ t('undo') }}</button>
+      <button class="toolbar__btn" :disabled="!state.canRedo" @click="redo">{{ t('redo') }}</button>
     </div>
 
     <div class="toolbar__group">
@@ -213,6 +222,11 @@ export default {
 
 .toolbar__btn:hover {
   background: #f3f4f6;
+}
+
+.toolbar__btn:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 .toolbar__group {

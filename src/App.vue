@@ -1,6 +1,7 @@
 <script>
 // SleepNote — root component: header, toolbar, grid, and legend.
 
+import { onMounted, onBeforeUnmount } from 'vue'
 import { useDiaryStore } from './Composables/DiaryStore.js'
 import { useI18n } from './I18n/useI18n.js'
 import DiaryToolbar from './Components/DiaryToolbar.vue'
@@ -11,8 +12,30 @@ export default {
   name: 'App',
   components: { DiaryToolbar, DiaryLegend, MonthGrid },
   setup() {
-    const { state } = useDiaryStore()
+    const { state, undo, redo } = useDiaryStore()
     const { t } = useI18n()
+
+    // Global keyboard shortcuts for undo/redo.
+    function onKeydown(event) {
+      if (!(event.ctrlKey || event.metaKey)) return
+      const target = event.target
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        return
+      }
+      const key = event.key.toLowerCase()
+      if (key === 'z') {
+        if (event.shiftKey) redo()
+        else undo()
+        event.preventDefault()
+      } else if (key === 'y') {
+        redo()
+        event.preventDefault()
+      }
+    }
+
+    onMounted(() => window.addEventListener('keydown', onKeydown))
+    onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
+
     return { state, t }
   },
 }
