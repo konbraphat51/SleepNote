@@ -47,6 +47,8 @@ const state = reactive({
   activeTool: { kind: 'state', value: SlotState.Sleep },
   diary: loadDiary(),
   notice: null,
+  canUndo: false,
+  canRedo: false,
 })
 
 let saveTimer = null
@@ -58,6 +60,102 @@ function saveDiary() {
     saveTimer = null
     writeCookie(DiaryCookieName, JSON.stringify(state.diary))
   }, 300)
+}
+
+// Persist immediately, flushing any pending debounce (used by undo/redo).
+function saveDiaryNow() {
+  if (saveTimer) {
+    clearTimeout(saveTimer)
+    saveTimer = null
+  }
+  writeCookie(DiaryCookieName, JSON.stringify(state.diary))
+}
+
+// --- Undo / redo history ----------------------------------------------------
+
+const MaxHistory = 50
+const GestureMs = 500
+
+const past = []
+const future = []
+let pendingSnapshot = null
+let commitTimer = null
+
+// Deep-clone the diary into a plain object, stripping Vue reactivity.
+function cloneDiary(diary) {
+  return JSON.parse(JSON.stringify(diary))
+}
+
+// Capture the pre-mutation state once per gesture and schedule its commit.
+function markDirty() {
+  if (pendingSnapshot === null) {
+    pendingSnapshot = cloneDiary(state.diary)
+    future.length = 0
+    updateFlags()
+  }
+  if (commitTimer) clearTimeout(commitTimer)
+  commitTimer = setTimeout(commitPending, GestureMs)
+}
+
+// Move the pending snapshot into the undo stack once the gesture ends.
+function commitPending() {
+  commitTimer = null
+  if (pendingSnapshot !== null) {
+    past.push(pendingSnapshot)
+    pendingSnapshot = null
+    if (past.length > MaxHistory) past.shift()
+  }
+  updateFlags()
+}
+
+// Flush an in-flight gesture so undo can revert it immediately.
+function flushPending() {
+  if (commitTimer) {
+    clearTimeout(commitTimer)
+    commitTimer = null
+  }
+  if (pendingSnapshot !== null) {
+    past.push(pendingSnapshot)
+    pendingSnapshot = null
+    if (past.length > MaxHistory) past.shift()
+  }
+}
+
+// Reflect the history stacks in the reactive UI flags.
+function updateFlags() {
+  state.canUndo = past.length > 0 || pendingSnapshot !== null
+  state.canRedo = future.length > 0
+}
+
+// Revert the most recent change.
+function undo() {
+  flushPending()
+  if (past.length === 0) return
+  future.push(cloneDiary(state.diary))
+  state.diary = past.pop()
+  saveDiaryNow()
+  updateFlags()
+}
+
+// Re-apply the most recently undone change.
+function redo() {
+  if (pendingSnapshot !== null || future.length === 0) return
+  past.push(cloneDiary(state.diary))
+  state.diary = future.pop()
+  saveDiaryNow()
+  updateFlags()
+}
+
+// Clear the whole history (used when the document is replaced).
+function resetHistory() {
+  if (commitTimer) {
+    clearTimeout(commitTimer)
+    commitTimer = null
+  }
+  pendingSnapshot = null
+  past.length = 0
+  future.length = 0
+  updateFlags()
 }
 
 // Return (creating if needed) the month data for the given year/month.
@@ -76,6 +174,7 @@ function getSlotState(year, monthIndex, day, slotIndex) {
 
 // Write one slot state and persist.
 function setSlotState(year, monthIndex, day, slotIndex, slotState) {
+  markDirty()
   const month = getMonthData(year, monthIndex)
   const dayKey = String(day)
   if (!month.slots[dayKey]) {
@@ -96,6 +195,7 @@ function getIconsAt(year, monthIndex, day, slotIndex) {
 
 // Toggle an icon on a slot; returns true when it was added.
 function toggleIconAt(year, monthIndex, day, slotIndex, iconType) {
+  markDirty()
   const month = getMonthData(year, monthIndex)
   const index = month.icons.findIndex(
     (icon) => icon.day === day && icon.slot === slotIndex && icon.type === iconType,
@@ -154,6 +254,7 @@ function importJson(text) {
   const parsed = JSON.parse(text)
   if (!parsed || parsed.version !== DiaryVersion || !parsed.months) throw new Error('invalid diary')
   state.diary = parsed
+  resetHistory()
   saveDiary()
 }
 
@@ -183,5 +284,7 @@ export function useDiaryStore() {
     importJson,
     showNotice,
     clearNotice,
+    undo,
+    redo,
   }
 }
