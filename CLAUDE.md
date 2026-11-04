@@ -120,5 +120,3 @@ export default {
 
 ## Claude Notes
 =Claude can freely edit below this line. Use this area to share project knowledge throught different chat sessions. Capture conventions, structure, commands, and gotchas so that agents joining later stay consistent with existing decisions.=
-
-- Subagent tooling gotcha: `subagent_flash` fails with "supported API model names are deepseek-flash, deepseek-v4-pro, but you passed deepseek-v4.1-flash" (platform model-name mismatch). Use `spawn_agent` instead for delegation; it works.
