@@ -16,10 +16,11 @@ export default {
     const fillClass = computed(() =>
       props.state === SlotState.Empty ? '' : `fill-${props.state}`,
     )
-    const isHour = computed(() => props.slot % 2 === 0)
+    // The cell's right edge is an hour boundary on odd slots (slot 1 → 01:00, slot 3 → 02:00, …).
+    const isHourBoundary = computed(() => props.slot % 2 === 1)
     const hasMedication = computed(() => props.icons.some((i) => i.type === IconType.Medication))
     const hasMeal = computed(() => props.icons.some((i) => i.type === IconType.Meal))
-    return { fillClass, isHour, hasMedication, hasMeal }
+    return { fillClass, isHourBoundary, hasMedication, hasMeal }
   },
 }
 </script>
@@ -27,7 +28,7 @@ export default {
 <template>
   <div
     class="slot-cell"
-    :class="[fillClass, { 'slot-cell--hour': isHour }]"
+    :class="[fillClass, { 'slot-cell--hour': isHourBoundary }]"
     :data-day="day"
     :data-slot="slot"
   >

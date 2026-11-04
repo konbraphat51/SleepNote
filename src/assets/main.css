@@ -60,6 +60,8 @@ button {
 :root {
   --diary-label-col: 3rem;
   --diary-cols: 48;
+  --diary-line-soft: #f3f4f6; /* 30-minute sub-division (light) */
+  --diary-line-strong: #aeb8c2; /* hour boundary (dark) */
 }
 
 /* Swatch used in the toolbar and legend. */
@@ -115,7 +117,7 @@ button {
   font-size: 0.62rem;
   color: #6b7280;
   background: #ffffff;
-  border-right: 1px solid #e5e7eb;
+  border-right: 1px solid var(--diary-line-strong);
   border-bottom: 1px solid #d1d5db;
 }
 
@@ -127,12 +129,12 @@ button {
   align-items: center;
   justify-content: center;
   height: 18px;
-  border-right: 1px solid #f3f4f6;
+  border-right: 1px solid var(--diary-line-soft);
   border-bottom: 1px solid #f3f4f6;
 }
 
 .slot-cell--hour {
-  border-right-color: #d1d5db;
+  border-right-color: var(--diary-line-strong);
 }
 
 .slot-cell__icon {
