@@ -60,6 +60,7 @@ App.vue
 - **ドラッグ塗り** — `MonthGrid` はボード上の `pointerdown` / `pointermove` / `pointerup` / `pointerleave` を監視します。セル（`[data-slot]`）上での `pointerdown` はアクティブなツールを適用し、状態ツールなら `painting = true` に設定します。`painting` 中は `pointermove` で通過した全セルにツールを適用し、ドラッグしながら連続して塗れます。アイコンツールは単発クリックで適用されます（ドラッグなし）。
 - **アイコンのトグル** — アイコンツール選択中にスロットをクリックすると `toggleIconAt` が呼ばれ、無ければ追加、あれば削除します。
 - **ツールチップ** — `pointermove` で `MonthGrid` は `document.elementFromPoint` によりホバー中のセルを特定し、`11/5 (水) 04:00` のようなツールチップを表示します。
+- **元に戻す / やり直す** — ストアはスナップショット履歴（`past` / `future` スタック）を保持し、500ms以内の連続した変更（ドラッグ）は1つのUndoステップにまとめます。ツールバーのボタンと Ctrl+Z / Ctrl+Shift+Z で操作します。
 
 ## PDF / 印刷
 
@@ -110,6 +111,8 @@ classDiagram
         +toggleIconAt(y, m, d, s, type)
         +exportJson()
         +importJson(text)
+        +undo()
+        +redo()
     }
     class CookieUtil {
         +readCookie(name)

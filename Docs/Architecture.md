@@ -60,6 +60,7 @@ Persistence: every mutation calls `saveDiary()`, which debounces (300 ms) a writ
 - **Drag paint** — `MonthGrid` listens for `pointerdown` / `pointermove` / `pointerup` / `pointerleave` on the board. A `pointerdown` on a cell (`[data-slot]`) applies the active tool and, for state tools, sets `painting = true`. While `painting`, `pointermove` applies the tool to every cell entered, enabling continuous drag painting. Icon tools apply on a single click (no drag).
 - **Icon toggle** — with an icon tool active, clicking a slot calls `toggleIconAt`, which adds the icon if absent and removes it if present.
 - **Tooltip** — on `pointermove`, `MonthGrid` resolves the hovered cell with `document.elementFromPoint` and shows a tooltip such as `11/5 (Wed) 04:00`.
+- **Undo / Redo** — the store keeps a snapshot history (`past` / `future` stacks); mutations within 500 ms (a drag) coalesce into a single undo step. Toolbar buttons and Ctrl+Z / Ctrl+Shift+Z trigger undo/redo.
 
 ## PDF / print
 
@@ -110,6 +111,8 @@ classDiagram
         +toggleIconAt(y, m, d, s, type)
         +exportJson()
         +importJson(text)
+        +undo()
+        +redo()
     }
     class CookieUtil {
         +readCookie(name)

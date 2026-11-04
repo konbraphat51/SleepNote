@@ -6,6 +6,7 @@ SleepNote is a browser-based sleep diary. It shows one month per page and one da
 - **Three states** that stay distinct in black-and-white printing: Sleep (solid), Awake in bed (diagonal hatch), Daytime sleepiness (dots)
 - **Two icons** per slot: Medication (capsule) and Meal (fork & knife)
 - **Cookie storage** with JSON export/import backup
+- **Undo / Redo** — revert or re-apply edits (toolbar buttons and Ctrl+Z / Ctrl+Shift+Z)
 - **PDF per month** via the browser print dialog (A4 landscape)
 - **Tooltip** on hover showing the slot's date/time
 - **English UI** by default, with a Japanese toggle
