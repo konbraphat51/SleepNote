@@ -71,6 +71,10 @@ App.vue
 - **ホバーのクロスヘア** — `pointermove` で `MonthGrid` は `document.elementFromPoint` によりホバー中のセルを特定し、`11/5 (水) 04:00` のようなツールチップを表示します。さらに、ホバー中のセルの行と列を薄くハイライトします（該当日の行と該当スロットの列のセルに `slot-cell--highlight` オーバーレイを付与）。
 - **元に戻す / やり直す** — ストアはスナップショット履歴（`past` / `future` スタック）を保持し、500ms以内の連続した変更（ドラッグ）は1つのUndoステップにまとめます。ツールバーのボタンと Ctrl+Z / Ctrl+Shift+Z で操作します。
 
+## カラーテーマ
+
+色はすべて `src/assets/main.css` のCSSカスタムプロパティに集約しています。`:root` にライト配色と塗りの色を定義し、`@media screen and (prefers-color-scheme: dark)` のブロックでOSの設定に応じて上書きします。上書きは `screen` のみなので、印刷時は常にライト配色になります。コンポーネントは `var(--color-*)` と `var(--fill-*)` を参照し、色を直接書きません。
+
 ## PDF / 印刷
 
 PDFはライブラリではなくブラウザの印刷ダイアログ（PDFに保存）で生成します。`DiaryToolbar` が `window.print()` を呼び出します。`src/assets/main.css` の `@media print` ブロックは `@page { size: A4 landscape; margin: 10mm }` を定義し、`.no-print` 要素（ヘッダー・ツールバー・警告）を非表示にし、月ボードにコンパクトな凡例を添えて1ページ（A4）に収まるようグリッドの枠線とオーバーフローを整えます。`print-color-adjust: exact` で背景の塗りを強制し、6つのパターン（塗りつぶし / 斜線ハッチ / ドットに加え、カスタム塗りのクロスハッチ / 縦縞 / チェッカー）はモノクロ印刷でも区別できるよう設計されています。

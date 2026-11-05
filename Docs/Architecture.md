@@ -71,6 +71,10 @@ Persistence: every mutation calls `saveDiary()`, which debounces (300 ms) a writ
 - **Tooltip and hover crosshair** — on `pointermove`, `MonthGrid` resolves the hovered cell with `document.elementFromPoint` and shows a tooltip such as `11/5 (Wed) 04:00`; the hovered cell's row and column are lightly highlighted (`slot-cell--highlight`) by passing the hovered day/slot down to `DayRow` / `SlotCell`.
 - **Undo / Redo** — the store keeps a snapshot history (`past` / `future` stacks); mutations within 500 ms (a drag) coalesce into a single undo step. Toolbar buttons and Ctrl+Z / Ctrl+Shift+Z trigger undo/redo.
 
+## Color theme
+
+All colors live in CSS custom properties in `src/assets/main.css`. The `:root` block holds the light palette and the fill colors. A `@media screen and (prefers-color-scheme: dark)` block overrides them to follow the OS setting. The override is `screen`-only, so printing always uses the light palette. Components reference `var(--color-*)` and `var(--fill-*)` and never hardcode colors.
+
 ## PDF / print
 
 PDF is produced by the browser's own print dialog (Save as PDF), not by a library: `DiaryToolbar` calls `window.print()`. `src/assets/main.css` defines an `@media print` block with `@page { size: A4 landscape; margin: 10mm }`. It hides every `.no-print` element (header, toolbar, warning) and cleans up the grid borders/overflow; the month board prints together with a compact legend so everything fits on one A4 page. `print-color-adjust: exact` forces the background fills, and the six patterns (solid / diagonal hatch / dots, plus cross-hatch / vertical stripes / checkerboard for the user-defined fills) are chosen to stay distinguishable in black and white.
