@@ -1,8 +1,9 @@
-# CLAUDE.md v1.1.
+# CLAUDE.md v1.3.0
 
-Check the newest version in [Gist](https://gist.github.com/konbraphat51/af909a374c59d306c2d2b3fd7788507e) every Monday (Last checked: 2026/11/4). If newer, replace `## User Requests` with the newest document and update the version number.
+Check the newest version in [Gist](https://gist.github.com/konbraphat51/af909a374c59d306c2d2b3fd7788507e) every Monday (Last checked: 2026/11/2). If newer, replace `## User Requests` with the newest document and update the version number, and be careful not to erace `## Claude Notes`. Even if not newer, update the "Last checked" date in this line so that you don't have to make a duplicated fetch.
 
 ## User Requests
+
 - Write SOLID, readable, and maintainable code
 - Put system documents in `/Docs/`, research notes (if user ordered you to research) in `/ResearchNotes/`
 - Write comments in English
@@ -61,7 +62,8 @@ def transcribe(
 - Debug the frontend by yourself
 - Make granular commits for each unit of implementation. One commit per small, self-contained unit. Do not bundle a whole subsystem into one commit. Commit each unit as soon as its checks pass.
   - Set Angular Conventional commit message prefixes.
-    - For update in `/ResearchNotes/`, set prefix as `resn:` 
+    - For update in `/ResearchNotes/`, set prefix as `resn:`
+  - You are allowed to run `git commit` without user's permission. But do not `git push` without user's permission.
 - If you use Python
   - Use `uv` for package management
   - Enable strict typing
@@ -97,9 +99,18 @@ export default {
 
 - Regarding your response in chat session, be aware with the language the user used as prompt. If the user prompted you in Japanese, make your final chat response in Japanese. If English, English.
 
+- Formatter:
+  - Do not set line legth limit.
+  - Use below:
+    - Prettier for all available languages (Especially for JavaScript/TypeScript, HTML, JSON, YAML, MD)
+      - indent: 2 spaces
+    - Black for Python
+    - Csharpier for C#
+
 ### Naming Conventions
 
 #### For All Languages
+
 - Directory Names: UpperCamelCase
 - File Names: UpperCamelCase
 - Class Names: Must be Noun. Must be postpositive (ex: `AppleGreen`, not `GreenApple`)
@@ -107,11 +118,13 @@ export default {
 - Variable Names: Basically noun, but follow general conventions (ex: `is` for booleans). Make it postpositive when noun.
 
 #### For Python
+
 - Class Names: UpperCamelCase
-- Function Names: snake_case. Privates starts from `_`
-- Variable Names: snake_case. Privates starts from `_`
+- Function Names: snake*case. Privates starts from `*`
+- Variable Names: snake*case. Privates starts from `*`
 
 #### For C#
+
 - Class Names: UpperCamelCase
 - Function Names: UpperCamelCase
 - Variable Names: lowerCamelCase
@@ -119,4 +132,5 @@ export default {
 - Enum Names: UpperCamelCase
 
 ## Claude Notes
+
 =Claude can freely edit below this line. Use this area to share project knowledge throught different chat sessions. Capture conventions, structure, commands, and gotchas so that agents joining later stay consistent with existing decisions.=
