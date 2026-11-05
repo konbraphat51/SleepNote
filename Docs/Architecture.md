@@ -71,6 +71,13 @@ Persistence: every mutation calls `saveDiary()`, which debounces (300 ms) a writ
 - **Tooltip and hover crosshair** — on `pointermove`, `MonthGrid` resolves the hovered cell with `document.elementFromPoint` and shows a tooltip such as `11/5 (Wed) 04:00`; the hovered cell's row and column are lightly highlighted (`slot-cell--highlight`) by passing the hovered day/slot down to `DayRow` / `SlotCell`.
 - **Undo / Redo** — the store keeps a snapshot history (`past` / `future` stacks); mutations within 500 ms (a drag) coalesce into a single undo step. Toolbar buttons and Ctrl+Z / Ctrl+Shift+Z trigger undo/redo.
 
+## Phone and touch
+
+- **Layout** — below 640px the label, total and notes columns shrink, slots grow to 22px tall, and the board scrolls horizontally. The Day, Sleep and Notes columns stay pinned while the slots scroll.
+- **Touch scrolls by default** — `.diary-board` uses `touch-action: pan-x pan-y`. A touch counts as a tap only if the browser did not take over for scrolling. `MonthGrid` applies the tool on `pointerup`, and `pointercancel` discards the pending tap, so a swipe never paints.
+- **Drag-paint switch** — `state.touchDragPaint` (UI only, not persisted) is shown on coarse pointers only. When on, the board uses `touch-action: none` and touch drags paint like the mouse does. When off, the board scrolls.
+- **Input zoom** — the note field is 16px on phones so iOS does not zoom when it is focused.
+
 ## Color theme
 
 All colors live in CSS custom properties in `src/assets/main.css`. The `:root` block holds the light palette and the fill colors. A `@media screen and (prefers-color-scheme: dark)` block overrides them to follow the OS setting. The override is `screen`-only, so printing always uses the light palette. Components reference `var(--color-*)` and `var(--fill-*)` and never hardcode colors.
