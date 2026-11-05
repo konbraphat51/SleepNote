@@ -24,6 +24,8 @@ export default {
     const painting = ref(false)
     // Day the current paint drag started on; a drag only paints within this row.
     let paintDay = null
+    // Touch tap waiting for pointerup; cancelled if the browser starts scrolling instead.
+    let pendingTap = null
     const tooltip = ref({ visible: false, x: 0, y: 0, text: '' })
     // Cell currently under the pointer, used to highlight its row and column.
     const hover = ref({ day: null, slot: null })
@@ -40,6 +42,11 @@ export default {
       if (event.button !== 0) return
       const cell = cellAt(event.clientX, event.clientY)
       if (!cell) return
+      // Touch without drag-paint: wait for pointerup so a swipe scrolls instead of painting.
+      if (event.pointerType === 'touch' && !state.touchDragPaint) {
+        pendingTap = cell
+        return
+      }
       if (state.activeTool.kind === 'icon') {
         applyActiveTool(state.viewYear, state.viewMonth, cell.day, cell.slot)
         return
@@ -76,6 +83,20 @@ export default {
       paintDay = null
     }
 
+    // A lifted touch that never turned into a scroll counts as a tap.
+    function onPointerUp() {
+      if (pendingTap) {
+        applyActiveTool(state.viewYear, state.viewMonth, pendingTap.day, pendingTap.slot)
+        pendingTap = null
+      }
+      stopPainting()
+    }
+
+    function onPointerCancel() {
+      pendingTap = null
+      stopPainting()
+    }
+
     // Right-click a painted slot to erase it (fill only, mirroring the eraser tool).
     function onContextMenu(event) {
       const cell = cellAt(event.clientX, event.clientY)
@@ -86,6 +107,7 @@ export default {
     }
 
     function onPointerLeave() {
+      pendingTap = null
       painting.value = false
       paintDay = null
       tooltip.value.visible = false
@@ -103,7 +125,8 @@ export default {
       hover,
       onPointerDown,
       onPointerMove,
-      stopPainting,
+      onPointerUp,
+      onPointerCancel,
       onContextMenu,
       onPointerLeave,
     }
@@ -116,10 +139,11 @@ export default {
     <h2 class="month-grid__title">{{ monthTitle(state.viewYear, state.viewMonth) }}</h2>
     <div
       class="diary-board"
+      :class="{ 'diary-board--drag-paint': state.touchDragPaint }"
       @pointerdown="onPointerDown"
       @pointermove="onPointerMove"
-      @pointerup="stopPainting"
-      @pointercancel="stopPainting"
+      @pointerup="onPointerUp"
+      @pointercancel="onPointerCancel"
       @pointerleave="onPointerLeave"
       @contextmenu="onContextMenu"
     >

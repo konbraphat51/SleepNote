@@ -98,6 +98,16 @@ export default {
   font-size: 0.8rem;
 }
 
+@media screen and (max-width: 640px) {
+  .app {
+    padding: 8px;
+  }
+
+  .app__title {
+    font-size: 1.15rem;
+  }
+}
+
 @media print {
   .app {
     max-width: none;

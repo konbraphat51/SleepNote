@@ -18,6 +18,7 @@ export default {
       undo,
       redo,
       setActiveTool,
+      toggleTouchDragPaint,
       setLanguage,
       exportJson,
       importJson,
@@ -90,6 +91,7 @@ export default {
       undo,
       redo,
       setActiveTool,
+      toggleTouchDragPaint,
       setLanguage,
       isActive,
       fileInput,
@@ -213,6 +215,17 @@ export default {
           <path d="M7 2c0 1 1 1.5 1 3M11 2c0 1 1 1.5 1 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
         </svg>
         {{ t('toolCoffee') }}
+      </button>
+    </div>
+
+    <div class="toolbar__group toolbar__group--touch">
+      <button
+        class="toolbar__tool"
+        :class="{ 'toolbar__tool--active': state.touchDragPaint }"
+        :aria-pressed="state.touchDragPaint"
+        @click="toggleTouchDragPaint"
+      >
+        {{ t('toolTouchDragPaint') }}
       </button>
     </div>
 
@@ -342,5 +355,39 @@ export default {
 
 .toolbar__file {
   display: none;
+}
+
+/* Drag-paint switch only matters on touch screens, where it trades painting for scrolling. */
+.toolbar__group--touch {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .toolbar__group--touch {
+    display: flex;
+  }
+}
+
+/* Phone layout: tighter spacing, and 16px inputs so iOS does not zoom on focus. */
+@media screen and (max-width: 640px) {
+  .toolbar {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .toolbar__btn,
+  .toolbar__tool {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+
+  .toolbar__label {
+    font-size: 0.7rem;
+  }
+
+  .toolbar__custom-name {
+    width: 6rem;
+    font-size: 16px;
+  }
 }
 </style>

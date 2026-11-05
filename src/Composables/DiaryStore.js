@@ -51,6 +51,8 @@ const state = reactive({
   viewMonth: today.getMonth(),
   language: readCookie(LanguageCookieName) === Locale.Ja ? Locale.Ja : Locale.En,
   activeTool: { kind: 'state', value: SlotState.Sleep },
+  // UI-only (not persisted): whether touch drags paint instead of scrolling.
+  touchDragPaint: false,
   diary: loadDiary(),
   notice: null,
   canUndo: false,
@@ -278,6 +280,11 @@ function setActiveTool(kind, value) {
   state.activeTool = { kind, value }
 }
 
+// Toggle touch drag-painting; when off, touch gestures scroll the board instead.
+function toggleTouchDragPaint() {
+  state.touchDragPaint = !state.touchDragPaint
+}
+
 // Set the UI language and persist it.
 function setLanguage(language) {
   state.language = language
@@ -323,6 +330,7 @@ export function useDiaryStore() {
     changeMonth,
     goToToday,
     setActiveTool,
+    toggleTouchDragPaint,
     setLanguage,
     exportJson,
     importJson,
