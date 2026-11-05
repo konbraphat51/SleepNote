@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://konbraphat51.github.io/SleepNote/sitemap.xml
