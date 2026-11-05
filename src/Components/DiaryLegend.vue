@@ -13,7 +13,7 @@ export default {
 </script>
 
 <template>
-  <div class="legend">
+  <div class="legend no-print">
     <span class="legend__title">{{ t('legendTitle') }}</span>
     <span class="legend__item"><span class="swatch fill-sleep"></span>{{ t('legendSleep') }}</span>
     <span class="legend__item"><span class="swatch fill-awakeInBed"></span>{{ t('legendAwakeInBed') }}</span>
