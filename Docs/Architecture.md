@@ -18,6 +18,7 @@ The whole diary is a single JSON document, serialized to a cookie and to exporte
 ```json
 {
   "version": 1,
+  "customLabels": { "custom1": "Caffeine" },
   "months": {
     "2026-11": {
       "slots": { "5": "..SSSSAAD...SSSS..." },
@@ -29,6 +30,7 @@ The whole diary is a single JSON document, serialized to a cookie and to exporte
 ```
 
 - `version` — schema version, currently `1`.
+- `customLabels` — user-defined names for the three custom fills (`custom1`–`custom3`); a missing key falls back to the localized default name (optional; older documents omit it).
 - `months` — keyed by `"YYYY-MM"` (from `TimeUtil.formatMonthKey`).
 - `slots` — keyed by the day number as a string; each value is a 48-character row, one character per 30-minute slot.
 - `icons` — array of `{ day, slot, type }`; `type` is `medication` or `meal`.
@@ -36,12 +38,15 @@ The whole diary is a single JSON document, serialized to a cookie and to exporte
 
 Slot characters (`DiaryConstants`):
 
-| Char | State              |
-| ---- | ------------------ |
-| `.`  | Empty              |
-| `S`  | Sleep              |
-| `A`  | Awake in bed       |
-| `D`  | Daytime sleepiness |
+| Char | State              | Kind          |
+| ---- | ------------------ | ------------- |
+| `.`  | Empty              | —             |
+| `S`  | Sleep              | fixed fill    |
+| `A`  | Awake in bed       | fixed fill    |
+| `D`  | Daytime sleepiness | fixed fill    |
+| `1`  | Custom 1           | user-defined  |
+| `2`  | Custom 2           | user-defined  |
+| `3`  | Custom 3           | user-defined  |
 
 ## State management
 
@@ -51,11 +56,11 @@ Slot characters (`DiaryConstants`):
 
 - `viewYear` / `viewMonth` — the visible month (`viewMonth` is 0-based).
 - `language` — `en` or `ja`.
-- `activeTool` — `{ kind, value }`; `kind` is `state` (Sleep / Awake in bed / Daytime sleepiness, with Eraser mapped to Empty) or `icon` (medication / meal).
+- `activeTool` — `{ kind, value }`; `kind` is `state` (Sleep / Awake in bed / Daytime sleepiness / the three user-defined fills, with Eraser mapped to Empty) or `icon` (medication / meal).
 - `diary` — the document described above.
 - `notice` — a transient status message.
 
-Persistence: every mutation calls `saveDiary()`, which debounces (300 ms) a write of `JSON.stringify(state.diary)` to the `sleepnote_diary` cookie via `CookieUtil.writeCookie`. On startup, `loadDiary()` reads and parses that cookie, falling back to an empty diary on any error. The language is persisted immediately to `sleepnote_language`.
+Persistence: every mutation calls `saveDiary()`, which debounces (300 ms) a write of `JSON.stringify(state.diary)` to the `sleepnote_diary` cookie via `CookieUtil.writeCookie`. On startup, `loadDiary()` reads and parses that cookie, falling back to an empty diary on any error. `normalizeDiary()` backfills fields such as `customLabels` on older documents and imported files. The language is persisted immediately to `sleepnote_language`.
 
 ## Interaction flow
 
@@ -67,7 +72,7 @@ Persistence: every mutation calls `saveDiary()`, which debounces (300 ms) a writ
 
 ## PDF / print
 
-PDF is produced by the browser's own print dialog (Save as PDF), not by a library: `DiaryToolbar` calls `window.print()`. `src/assets/main.css` defines an `@media print` block with `@page { size: A4 landscape; margin: 10mm }`. It hides every `.no-print` element (header, toolbar, warning) and cleans up the grid borders/overflow; the month board prints together with a compact legend so everything fits on one A4 page. `print-color-adjust: exact` forces the background fills, and the three patterns (solid / diagonal hatch / dots) are chosen to stay distinguishable in black and white.
+PDF is produced by the browser's own print dialog (Save as PDF), not by a library: `DiaryToolbar` calls `window.print()`. `src/assets/main.css` defines an `@media print` block with `@page { size: A4 landscape; margin: 10mm }`. It hides every `.no-print` element (header, toolbar, warning) and cleans up the grid borders/overflow; the month board prints together with a compact legend so everything fits on one A4 page. `print-color-adjust: exact` forces the background fills, and the six patterns (solid / diagonal hatch / dots, plus cross-hatch / vertical stripes / checkerboard for the user-defined fills) are chosen to stay distinguishable in black and white.
 
 ## Class diagram
 
@@ -111,6 +116,8 @@ classDiagram
         +state
         +applyActiveTool(y, m, d, s)
         +setSlotState(y, m, d, s, slotState)
+        +getCustomLabel(stateKey)
+        +setCustomLabel(stateKey, text)
         +toggleIconAt(y, m, d, s, type)
         +exportJson()
         +importJson(text)

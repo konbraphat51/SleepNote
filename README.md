@@ -1,9 +1,10 @@
 # SleepNote
 
-SleepNote is a browser-based sleep diary. It shows one month per page and one day per row, with 48 slots of 30 minutes each (00:00–24:00). Paint each slot with one of three states and place icons on specific slots, then save the month as a PDF.
+SleepNote is a browser-based sleep diary. It shows one month per page and one day per row, with 48 slots of 30 minutes each (00:00–24:00). Paint each slot with one of three fixed states or with one of three user-defined fills, and place icons on specific slots, then save the month as a PDF.
 
 - **One month per page**, one day per row, 48 slots × 30 minutes
 - **Three states** that stay distinct in black-and-white printing: Sleep (solid), Awake in bed (diagonal hatch), Daytime sleepiness (dots)
+- **Three user-defined fills** — rename each from the toolbar to record anything you like (e.g. caffeine, exercise); each keeps its own print-safe pattern (cross-hatch, vertical stripes, checkerboard)
 - **Two icons** per slot: Medication (capsule) and Meal (fork & knife)
 - **Cookie storage** with JSON export/import backup
 - **Undo / Redo** — revert or re-apply edits (toolbar buttons and Ctrl+Z / Ctrl+Shift+Z)
@@ -51,7 +52,7 @@ All diary data is stored in a single browser cookie (`sleepnote_diary`). A brows
 
 ## PDF export
 
-Click **PDF / Print** in the toolbar to open the browser print dialog, then choose **Save as PDF**. The print stylesheet uses A4 landscape and prints the current month grid together with the legend on a single page (the toolbar, header, and warnings are hidden). The three fill patterns — solid, diagonal hatch, and dots — are designed to stay distinct when printed in black and white.
+Click **PDF / Print** in the toolbar to open the browser print dialog, then choose **Save as PDF**. The print stylesheet uses A4 landscape and prints the current month grid together with the legend on a single page (the toolbar, header, and warnings are hidden). All six fill patterns — solid, diagonal hatch, and dots for the fixed states, plus cross-hatch, vertical stripes, and checkerboard for the user-defined fills — are designed to stay distinct when printed in black and white.
 
 ## GitHub Pages deployment
 

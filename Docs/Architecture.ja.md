@@ -18,6 +18,7 @@ App.vue
 ```json
 {
   "version": 1,
+  "customLabels": { "custom1": "カフェイン" },
   "months": {
     "2026-11": {
       "slots": { "5": "..SSSSAAD...SSSS..." },
@@ -29,6 +30,7 @@ App.vue
 ```
 
 - `version` — スキーマのバージョン（現在 `1`）。
+- `customLabels` — カスタム塗り3種（`custom1`〜`custom3`）のユーザー定義名。キーが無ければローカライズ済みの既定名を使う（任意。古いデータには存在しない）。
 - `months` — `"YYYY-MM"`（`TimeUtil.formatMonthKey` が生成）をキーとする。
 - `slots` — 日番号の文字列をキーとし、値は48文字の行（30分スロットごとに1文字）。
 - `icons` — `{ day, slot, type }` の配列。`type` は `medication` または `meal`。
@@ -36,12 +38,15 @@ App.vue
 
 スロット文字（`DiaryConstants`）:
 
-| 文字 | 状態       |
-| ---- | ---------- |
-| `.`  | 空         |
-| `S`  | 睡眠       |
-| `A`  | 在床覚醒   |
-| `D`  | 活動中眠気 |
+| 文字 | 状態       | 種別             |
+| ---- | ---------- | ---------------- |
+| `.`  | 空         | —                |
+| `S`  | 睡眠       | 固定の塗り       |
+| `A`  | 在床覚醒   | 固定の塗り       |
+| `D`  | 活動中眠気 | 固定の塗り       |
+| `1`  | カスタム1  | ユーザー定義の塗り |
+| `2`  | カスタム2  | ユーザー定義の塗り |
+| `3`  | カスタム3  | ユーザー定義の塗り |
 
 ## 状態管理
 
@@ -51,11 +56,11 @@ App.vue
 
 - `viewYear` / `viewMonth` — 表示中の月（`viewMonth` は0始まり）。
 - `language` — `en` または `ja`。
-- `activeTool` — `{ kind, value }`。`kind` は `state`（睡眠 / 在床覚醒 / 活動中眠気。消しゴムは Empty に対応）または `icon`（服薬 / 食事）。
+- `activeTool` — `{ kind, value }`。`kind` は `state`（睡眠 / 在床覚醒 / 活動中眠気 / ユーザー定義の塗り3種。消しゴムは Empty に対応）または `icon`（服薬 / 食事）。
 - `diary` — 上記のドキュメント。
 - `notice` — 一時的なステータスメッセージ。
 
-永続化: すべての変更は `saveDiary()` を呼び、300msデバウンス後に `JSON.stringify(state.diary)` を `CookieUtil.writeCookie` で `sleepnote_diary` Cookieへ書き込みます。起動時は `loadDiary()` がこのCookieを読み込んでパースし、エラー時は空の日誌にフォールバックします。言語は `sleepnote_language` に即時保存されます。
+永続化: すべての変更は `saveDiary()` を呼び、300msデバウンス後に `JSON.stringify(state.diary)` を `CookieUtil.writeCookie` で `sleepnote_diary` Cookieへ書き込みます。起動時は `loadDiary()` がこのCookieを読み込んでパースし、エラー時は空の日誌にフォールバックします。古いドキュメントや読み込んだファイルは `normalizeDiary()` が `customLabels` などの不足フィールドを補完します。言語は `sleepnote_language` に即時保存されます。
 
 ## 操作フロー
 
@@ -67,7 +72,7 @@ App.vue
 
 ## PDF / 印刷
 
-PDFはライブラリではなくブラウザの印刷ダイアログ（PDFに保存）で生成します。`DiaryToolbar` が `window.print()` を呼び出します。`src/assets/main.css` の `@media print` ブロックは `@page { size: A4 landscape; margin: 10mm }` を定義し、`.no-print` 要素（ヘッダー・ツールバー・警告）を非表示にし、月ボードにコンパクトな凡例を添えて1ページ（A4）に収まるようグリッドの枠線とオーバーフローを整えます。`print-color-adjust: exact` で背景の塗りを強制し、3つのパターン（塗りつぶし / 斜線ハッチ / ドット）はモノクロ印刷でも区別できるよう設計されています。
+PDFはライブラリではなくブラウザの印刷ダイアログ（PDFに保存）で生成します。`DiaryToolbar` が `window.print()` を呼び出します。`src/assets/main.css` の `@media print` ブロックは `@page { size: A4 landscape; margin: 10mm }` を定義し、`.no-print` 要素（ヘッダー・ツールバー・警告）を非表示にし、月ボードにコンパクトな凡例を添えて1ページ（A4）に収まるようグリッドの枠線とオーバーフローを整えます。`print-color-adjust: exact` で背景の塗りを強制し、6つのパターン（塗りつぶし / 斜線ハッチ / ドットに加え、カスタム塗りのクロスハッチ / 縦縞 / チェッカー）はモノクロ印刷でも区別できるよう設計されています。
 
 ## クラス図
 
@@ -111,6 +116,8 @@ classDiagram
         +state
         +applyActiveTool(y, m, d, s)
         +setSlotState(y, m, d, s, slotState)
+        +getCustomLabel(stateKey)
+        +setCustomLabel(stateKey, text)
         +toggleIconAt(y, m, d, s, type)
         +exportJson()
         +importJson(text)
