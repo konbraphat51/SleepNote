@@ -8,6 +8,7 @@ App.vue
 ├── MonthGrid.vue      — 月ボード（時刻ヘッダー + 日行）。ドラッグ塗りとツールチップを処理
 │   └── DayRow.vue     — 1日分: 日付ラベル + 睡眠時間合計(HH:MM) + 48スロットのセル
 │       └── SlotCell.vue — 30分1スロット: 塗りパターン + 任意のアイコン
+├── DayFocus.vue       — 1日表示: 48スロットを時刻付きの縦長リストで表示（日表示では MonthGrid の代わりに表示）
 └── DiaryLegend.vue    — 塗りパターンとアイコンの凡例
 ```
 
@@ -77,6 +78,8 @@ App.vue
 - **タッチは既定でスクロール** — `.diary-board` は `touch-action: pan-x pan-y` を使います。ブラウザがスクロールに入らなかったタッチだけをタップとみなします。`MonthGrid` は `pointerup` で塗りを適用し、`pointercancel` で保留中のタップを破棄するため、スワイプでは塗られません。現在の塗りと同じ塗りのスロットをタップすると消えます（`DiaryStore.tapActiveTool`）。そのため2回タップすると塗りがトグルで消えます。
 - **ドラッグ塗りの切り替え** — `state.touchDragPaint`（UIのみ、保存しない）はタッチ端末（`pointer: coarse`）でのみ表示します。ONのときは盤面が `touch-action: none` になり、指のドラッグでマウスと同じように塗れます。OFFのときは盤面をスクロールできます。
 - **入力時のズーム防止** — スマホでは備考欄を16pxにし、フォーカス時にiOSがズームしないようにしています。
+- **月表示 / 日表示** — `state.viewMode`（`month` または `day`、UIのみ）で `MonthGrid` か `DayFocus` を選びます。日表示で表示する日は `state.focusDay` です。月表示で日付ラベルを押すと `openDayView(day)` が呼ばれ、前の日・次の日ボタンは `shiftFocusDay(±1)` を呼びます。月をまたいでも移動できます。
+- **操作の共通化** — `Composables/PaintGesture.js`（`usePaintGesture`）に、タップ・ドラッグ・右クリックの処理をまとめています。`MonthGrid` と `DayFocus` が同じものを使うため、どちらの表示でも塗りの動きは同じです。
 
 ## カラーテーマ
 

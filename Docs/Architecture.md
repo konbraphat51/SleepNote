@@ -8,6 +8,7 @@ App.vue
 ├── MonthGrid.vue      — month board (hour header + day rows); handles drag-paint and tooltip
 │   └── DayRow.vue     — one day: date label + sleep total (HH:MM) + 48 slot cells
 │       └── SlotCell.vue — one 30-minute slot: fill pattern + optional icons
+├── DayFocus.vue       — single-day view: 48 time-labelled slots as a tall list (shown instead of MonthGrid in Day mode)
 └── DiaryLegend.vue    — legend of fill patterns and icons
 ```
 
@@ -77,6 +78,8 @@ Persistence: every mutation calls `saveDiary()`, which debounces (300 ms) a writ
 - **Touch scrolls by default** — `.diary-board` uses `touch-action: pan-x pan-y`. A touch counts as a tap only if the browser did not take over for scrolling. `MonthGrid` applies the tool on `pointerup`, and `pointercancel` discards the pending tap, so a swipe never paints. A tap on a slot that already shows the active fill clears it (`DiaryStore.tapActiveTool`), so tapping twice toggles the fill off.
 - **Drag-paint switch** — `state.touchDragPaint` (UI only, not persisted) is shown on coarse pointers only. When on, the board uses `touch-action: none` and touch drags paint like the mouse does. When off, the board scrolls.
 - **Input zoom** — the note field is 16px on phones so iOS does not zoom when it is focused.
+- **Month / Day mode** — `state.viewMode` (`month` or `day`, UI only) selects `MonthGrid` or `DayFocus`. `state.focusDay` is the day shown in Day mode. Tapping a day label in the month board calls `openDayView(day)`; the Prev/Next buttons call `shiftFocusDay(±1)`, which crosses month boundaries.
+- **Shared gestures** — `Composables/PaintGesture.js` (`usePaintGesture`) holds the tap, drag, and right-click handlers used by both `MonthGrid` and `DayFocus`, so painting behaves the same in either view.
 
 ## Color theme
 
