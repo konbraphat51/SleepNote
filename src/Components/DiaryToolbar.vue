@@ -202,6 +202,18 @@ export default {
         </svg>
         {{ t('toolMeal') }}
       </button>
+      <button
+        class="toolbar__tool"
+        :class="{ 'toolbar__tool--active': isActive('icon', IconType.Coffee) }"
+        @click="setActiveTool('icon', IconType.Coffee)"
+      >
+        <svg viewBox="0 0 24 24" class="toolbar__icon" aria-hidden="true">
+          <path d="M3 9h13v5a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+          <path d="M16 11h1.5a2.5 2.5 0 0 1 0 5H16" fill="none" stroke="currentColor" stroke-width="2" />
+          <path d="M7 2c0 1 1 1.5 1 3M11 2c0 1 1 1.5 1 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        {{ t('toolCoffee') }}
+      </button>
     </div>
 
     <div class="toolbar__group toolbar__group--end">

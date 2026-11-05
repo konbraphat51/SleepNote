@@ -43,6 +43,7 @@ export const CharSlotState = Object.freeze({
 export const IconType = Object.freeze({
   Medication: 'medication',
   Meal: 'meal',
+  Coffee: 'coffee',
 })
 
 // User-defined fills: the same paint mechanism as the fixed fills, but the
