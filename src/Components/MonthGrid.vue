@@ -4,7 +4,7 @@
 import { ref, computed } from 'vue'
 import { useDiaryStore } from '../Composables/DiaryStore.js'
 import { useI18n } from '../I18n/useI18n.js'
-import { SlotsPerDay } from '../Constants/DiaryConstants.js'
+import { SlotsPerDay, SlotState } from '../Constants/DiaryConstants.js'
 import { getDaysInMonth, formatSlotTime, getWeekday } from '../Utils/TimeUtil.js'
 import DayRow from './DayRow.vue'
 
@@ -12,7 +12,7 @@ export default {
   name: 'MonthGrid',
   components: { DayRow },
   setup() {
-    const { state, applyActiveTool } = useDiaryStore()
+    const { state, getSlotState, setSlotState, applyActiveTool } = useDiaryStore()
     const { t, monthTitle } = useI18n()
 
     const days = computed(() =>
@@ -22,7 +22,11 @@ export default {
     const hourLabels = Array.from({ length: SlotsPerDay / 2 }, (_, i) => i)
 
     const painting = ref(false)
+    // Day the current paint drag started on; a drag only paints within this row.
+    let paintDay = null
     const tooltip = ref({ visible: false, x: 0, y: 0, text: '' })
+    // Cell currently under the pointer, used to highlight its row and column.
+    const hover = ref({ day: null, slot: null })
 
     // Find the slot cell under a pointer position.
     function cellAt(clientX, clientY) {
@@ -33,6 +37,7 @@ export default {
     }
 
     function onPointerDown(event) {
+      if (event.button !== 0) return
       const cell = cellAt(event.clientX, event.clientY)
       if (!cell) return
       if (state.activeTool.kind === 'icon') {
@@ -40,6 +45,7 @@ export default {
         return
       }
       painting.value = true
+      paintDay = cell.day
       applyActiveTool(state.viewYear, state.viewMonth, cell.day, cell.slot)
     }
 
@@ -47,10 +53,14 @@ export default {
       const cell = cellAt(event.clientX, event.clientY)
       if (!cell) {
         tooltip.value.visible = false
+        hover.value = { day: null, slot: null }
         return
       }
-      if (painting.value && state.activeTool.kind !== 'icon') {
+      if (painting.value && state.activeTool.kind !== 'icon' && cell.day === paintDay) {
         applyActiveTool(state.viewYear, state.viewMonth, cell.day, cell.slot)
+      }
+      if (hover.value.day !== cell.day || hover.value.slot !== cell.slot) {
+        hover.value = { day: cell.day, slot: cell.slot }
       }
       const weekday = t('weekdaysShort')[getWeekday(state.viewYear, state.viewMonth, cell.day)]
       tooltip.value = {
@@ -63,11 +73,22 @@ export default {
 
     function stopPainting() {
       painting.value = false
+      paintDay = null
+    }
+
+    // Right-click a painted slot to erase it (fill only, mirroring the eraser tool).
+    function onContextMenu(event) {
+      const cell = cellAt(event.clientX, event.clientY)
+      if (!cell) return
+      if (getSlotState(state.viewYear, state.viewMonth, cell.day, cell.slot) === SlotState.Empty) return
+      setSlotState(state.viewYear, state.viewMonth, cell.day, cell.slot, SlotState.Empty)
     }
 
     function onPointerLeave() {
       painting.value = false
+      paintDay = null
       tooltip.value.visible = false
+      hover.value = { day: null, slot: null }
     }
 
     return {
@@ -78,9 +99,11 @@ export default {
       slotIndices,
       hourLabels,
       tooltip,
+      hover,
       onPointerDown,
       onPointerMove,
       stopPainting,
+      onContextMenu,
       onPointerLeave,
     }
   },
@@ -97,12 +120,19 @@ export default {
       @pointerup="stopPainting"
       @pointercancel="stopPainting"
       @pointerleave="onPointerLeave"
+      @contextmenu.prevent="onContextMenu"
     >
       <div class="diary-row month-grid__header">
         <div class="diary-label">{{ t('dayHeader') }}</div>
         <div v-for="hour in hourLabels" :key="hour" class="diary-hour">{{ hour }}</div>
       </div>
-      <DayRow v-for="day in days" :key="day" :day="day" />
+      <DayRow
+        v-for="day in days"
+        :key="day"
+        :day="day"
+        :hover-day="hover.day"
+        :hover-slot="hover.slot"
+      />
     </div>
     <div
       v-if="tooltip.visible"

@@ -137,6 +137,15 @@ button {
   border-right-color: var(--diary-line-strong);
 }
 
+/* Hover crosshair: lightly tint the hovered row and column without hiding fills. */
+.slot-cell--highlight::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(59, 130, 246, 0.16);
+  pointer-events: none;
+}
+
 .slot-cell__icon {
   width: 12px;
   height: 12px;
@@ -171,5 +180,9 @@ button {
 
   .slot-cell {
     height: 20px;
+  }
+
+  .slot-cell--highlight::after {
+    display: none;
   }
 }

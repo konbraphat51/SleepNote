@@ -57,9 +57,10 @@ App.vue
 
 ## 操作フロー
 
-- **ドラッグ塗り** — `MonthGrid` はボード上の `pointerdown` / `pointermove` / `pointerup` / `pointerleave` を監視します。セル（`[data-slot]`）上での `pointerdown` はアクティブなツールを適用し、状態ツールなら `painting = true` に設定します。`painting` 中は `pointermove` で通過した全セルにツールを適用し、ドラッグしながら連続して塗れます。アイコンツールは単発クリックで適用されます（ドラッグなし）。
+- **ドラッグ塗り** — `MonthGrid` はボード上の `pointerdown` / `pointermove` / `pointerup` / `pointerleave` を監視します。セル（`[data-slot]`）上での左ボタン `pointerdown` はアクティブなツールを適用し、状態ツールなら開始した日（`paintDay`）を記録して `painting = true` に設定します。`painting` 中は `pointermove` で通過したセルにツールを適用しますが、ドラッグを開始した日（行）の中だけで、誤って他の日へドラッグしても塗られません。アイコンツールは単発クリックで適用されます（ドラッグなし）。
+- **右クリックで消去** — 塗ったスロットを右クリック（`contextmenu`）すると塗りを `Empty` に戻します（消しゴムツールと同じ）。ボード上ではブラウザ標準のコンテキストメニューを抑止します。
 - **アイコンのトグル** — アイコンツール選択中にスロットをクリックすると `toggleIconAt` が呼ばれ、無ければ追加、あれば削除します。
-- **ツールチップ** — `pointermove` で `MonthGrid` は `document.elementFromPoint` によりホバー中のセルを特定し、`11/5 (水) 04:00` のようなツールチップを表示します。
+- **ホバーのクロスヘア** — `pointermove` で `MonthGrid` は `document.elementFromPoint` によりホバー中のセルを特定し、`11/5 (水) 04:00` のようなツールチップを表示します。さらに、ホバー中のセルの行と列を薄くハイライトします（該当日の行と該当スロットの列のセルに `slot-cell--highlight` オーバーレイを付与）。
 - **元に戻す / やり直す** — ストアはスナップショット履歴（`past` / `future` スタック）を保持し、500ms以内の連続した変更（ドラッグ）は1つのUndoステップにまとめます。ツールバーのボタンと Ctrl+Z / Ctrl+Shift+Z で操作します。
 
 ## PDF / 印刷
@@ -147,16 +148,16 @@ sequenceDiagram
 
     U->>M: [data-slot] 上で pointerdown
     M->>M: cellAt(x, y) → { day, slot }
-    M->>M: painting = true
+    M->>M: painting = true; paintDay = day
     M->>S: applyActiveTool(year, month, day, slot)
     S->>S: setSlotState(...)
     S->>C: saveDiary() (300msデバウンス)
     C->>C: writeCookie('sleepnote_diary', json)
 
-    U->>M: 次のセルへ pointermove
-    M->>S: applyActiveTool(year, month, day, slot)
+    U->>M: 同じ日（行）の中で pointermove
+    M->>S: applyActiveTool(...)（day == paintDay のときのみ）
     S->>C: saveDiary() (デバウンス)
 
     U->>M: pointerup
-    M->>M: painting = false
+    M->>M: painting = false; paintDay = null
 ```

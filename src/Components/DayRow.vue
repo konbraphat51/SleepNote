@@ -13,6 +13,8 @@ export default {
   components: { SlotCell },
   props: {
     day: { type: Number, required: true },
+    hoverDay: { type: Number, default: null },
+    hoverSlot: { type: Number, default: null },
   },
   setup(props) {
     const { state, getSlotState, getIconsAt } = useDiaryStore()
@@ -33,7 +35,9 @@ export default {
       )
     })
 
-    return { state, slotIndices, weekdayShort, isToday, getSlotState, getIconsAt }
+    const isHoverRow = computed(() => props.hoverDay === props.day)
+
+    return { state, slotIndices, weekdayShort, isToday, isHoverRow, getSlotState, getIconsAt }
   },
 }
 </script>
@@ -51,6 +55,7 @@ export default {
       :slot="slotIndex"
       :state="getSlotState(state.viewYear, state.viewMonth, day, slotIndex)"
       :icons="getIconsAt(state.viewYear, state.viewMonth, day, slotIndex)"
+      :highlight="isHoverRow || slotIndex === hoverSlot"
     />
   </div>
 </template>

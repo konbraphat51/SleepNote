@@ -9,6 +9,9 @@ SleepNote is a browser-based sleep diary. It shows one month per page and one da
 - **Undo / Redo** — revert or re-apply edits (toolbar buttons and Ctrl+Z / Ctrl+Shift+Z)
 - **PDF per month** via the browser print dialog (A4 landscape)
 - **Tooltip** on hover showing the slot's date/time
+- **Hover crosshair** — the hovered slot's row and column are lightly highlighted
+- **Paint by dragging** — a drag paints only within the day row it started on, so a stray drag into another day leaves it untouched
+- **Right-click to erase** — right-click a painted slot to clear its fill (same result as the eraser tool)
 - **English UI** by default, with a Japanese toggle
 
 ## Setup

@@ -11,6 +11,7 @@ export default {
     slot: { type: Number, required: true },
     state: { type: String, default: SlotState.Empty },
     icons: { type: Array, default: () => [] },
+    highlight: { type: Boolean, default: false },
   },
   setup(props) {
     const fillClass = computed(() =>
@@ -28,7 +29,7 @@ export default {
 <template>
   <div
     class="slot-cell"
-    :class="[fillClass, { 'slot-cell--hour': isHourBoundary }]"
+    :class="[fillClass, { 'slot-cell--hour': isHourBoundary, 'slot-cell--highlight': highlight }]"
     :data-day="day"
     :data-slot="slot"
   >

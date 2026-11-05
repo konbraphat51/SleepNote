@@ -57,9 +57,10 @@ Persistence: every mutation calls `saveDiary()`, which debounces (300 ms) a writ
 
 ## Interaction flow
 
-- **Drag paint** — `MonthGrid` listens for `pointerdown` / `pointermove` / `pointerup` / `pointerleave` on the board. A `pointerdown` on a cell (`[data-slot]`) applies the active tool and, for state tools, sets `painting = true`. While `painting`, `pointermove` applies the tool to every cell entered, enabling continuous drag painting. Icon tools apply on a single click (no drag).
+- **Drag paint** — `MonthGrid` listens for `pointerdown` / `pointermove` / `pointerup` / `pointerleave` on the board. A left-button `pointerdown` on a cell (`[data-slot]`) applies the active tool and, for state tools, records the starting day (`paintDay`) and sets `painting = true`. While `painting`, `pointermove` applies the tool to every cell entered — but only within the day row where the drag started, so an accidental drag into another day paints nothing there. Icon tools apply on a single click (no drag).
+- **Right-click erase** — a `contextmenu` (right-click) on a painted slot clears its fill (`setSlotState` to `Empty`), mirroring the eraser tool; the native context menu is suppressed on the board.
 - **Icon toggle** — with an icon tool active, clicking a slot calls `toggleIconAt`, which adds the icon if absent and removes it if present.
-- **Tooltip** — on `pointermove`, `MonthGrid` resolves the hovered cell with `document.elementFromPoint` and shows a tooltip such as `11/5 (Wed) 04:00`.
+- **Tooltip and hover crosshair** — on `pointermove`, `MonthGrid` resolves the hovered cell with `document.elementFromPoint` and shows a tooltip such as `11/5 (Wed) 04:00`; the hovered cell's row and column are lightly highlighted (`slot-cell--highlight`) by passing the hovered day/slot down to `DayRow` / `SlotCell`.
 - **Undo / Redo** — the store keeps a snapshot history (`past` / `future` stacks); mutations within 500 ms (a drag) coalesce into a single undo step. Toolbar buttons and Ctrl+Z / Ctrl+Shift+Z trigger undo/redo.
 
 ## PDF / print
@@ -147,16 +148,16 @@ sequenceDiagram
 
     U->>M: pointerdown on [data-slot]
     M->>M: cellAt(x, y) → { day, slot }
-    M->>M: painting = true
+    M->>M: painting = true; paintDay = day
     M->>S: applyActiveTool(year, month, day, slot)
     S->>S: setSlotState(...)
     S->>C: saveDiary() (debounced 300 ms)
     C->>C: writeCookie('sleepnote_diary', json)
 
-    U->>M: pointermove to next cell
-    M->>S: applyActiveTool(year, month, day, slot)
+    U->>M: pointermove within the same day row
+    M->>S: applyActiveTool(...) only while day == paintDay
     S->>C: saveDiary() (debounced)
 
     U->>M: pointerup
-    M->>M: painting = false
+    M->>M: painting = false; paintDay = null
 ```
