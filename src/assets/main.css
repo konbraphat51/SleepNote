@@ -1,4 +1,4 @@
-/* SleepNote — global base styles, diary fill patterns, and print rules. */
+/* SleepNote — global base styles, color tokens, diary fill patterns, and print rules. */
 
 * {
   box-sizing: border-box;
@@ -12,14 +12,106 @@ body {
 
 body {
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  color: #1f2937;
-  background: #f8fafc;
+  color: var(--color-text);
+  background: var(--color-page);
   -webkit-font-smoothing: antialiased;
 }
 
 button {
   font: inherit;
   cursor: pointer;
+}
+
+/*
+ * Color tokens. Light values are the defaults; the dark block below overrides them
+ * on screen only, so printing always uses the light palette.
+ */
+:root {
+  color-scheme: light;
+
+  --color-text: #1f2937;
+  --color-text-muted: #6b7280;
+  --color-text-faint: #9ca3af;
+  --color-legend-text: #374151;
+  --color-page: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f9fafb;
+  --color-surface-hover: #f3f4f6;
+  --color-border: #d1d5db;
+  --color-border-soft: #e5e7eb;
+  --color-grid-soft: #f3f4f6;
+  --color-accent: #2563eb;
+  --color-accent-soft: #eff6ff;
+  --color-highlight: rgba(59, 130, 246, 0.16);
+  --color-today: #fef3c7;
+  --color-notice-bg: #ecfdf5;
+  --color-notice-text: #047857;
+  --color-notice-border: #a7f3d0;
+  --color-tooltip-bg: #111827;
+  --color-tooltip-text: #ffffff;
+  --color-icon: #111827;
+
+  /* Fixed and user-defined fills: background, pattern line/dot, and the solid sleep fill. */
+  --fill-sleep: #1f2937;
+  --fill-awake-bg: #dbeafe;
+  --fill-awake-line: #1e3a8a;
+  --fill-sleepiness-bg: #fef3c7;
+  --fill-sleepiness-dot: #92400e;
+  --fill-custom1-bg: #dcfce7;
+  --fill-custom1-line: #166534;
+  --fill-custom2-bg: #ede9fe;
+  --fill-custom2-line: #5b21b6;
+  --fill-custom3-bg: #ffedd5;
+  --fill-custom3-line: #9a3412;
+
+  --diary-label-col: 3rem;
+  --diary-total-col: 3.4rem;
+  --diary-cols: 48;
+  --diary-notes-col: 9rem;
+  --diary-line-soft: var(--color-grid-soft); /* 30-minute sub-division (light) */
+  --diary-line-strong: #aeb8c2; /* hour boundary */
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --color-text: #e5e7eb;
+    --color-text-muted: #9ca3af;
+    --color-text-faint: #6b7280;
+    --color-legend-text: #d1d5db;
+    --color-page: #0f172a;
+    --color-surface: #1e293b;
+    --color-surface-alt: #172033;
+    --color-surface-hover: #334155;
+    --color-border: #475569;
+    --color-border-soft: #334155;
+    --color-grid-soft: #293548;
+    --color-accent: #60a5fa;
+    --color-accent-soft: #1e3a5f;
+    --color-highlight: rgba(96, 165, 250, 0.22);
+    --color-today: #78350f;
+    --color-notice-bg: #052e24;
+    --color-notice-text: #6ee7b7;
+    --color-notice-border: #065f46;
+    --color-tooltip-bg: #f9fafb;
+    --color-tooltip-text: #111827;
+    --color-icon: #f3f4f6;
+
+    --fill-sleep: #e5e7eb;
+    --fill-awake-bg: #1e3a8a;
+    --fill-awake-line: #93c5fd;
+    --fill-sleepiness-bg: #78350f;
+    --fill-sleepiness-dot: #fde68a;
+    --fill-custom1-bg: #14532d;
+    --fill-custom1-line: #86efac;
+    --fill-custom2-bg: #4c1d95;
+    --fill-custom2-line: #c4b5fd;
+    --fill-custom3-bg: #7c2d12;
+    --fill-custom3-line: #fdba74;
+
+    --diary-line-strong: #64748b;
+  }
 }
 
 /*
@@ -31,42 +123,42 @@ button {
  *   custom 1/2/3 = cross-hatch / vertical stripes / checkerboard (user-defined meaning)
  */
 .fill-sleep {
-  background-color: #1f2937;
+  background-color: var(--fill-sleep);
 }
 
 .fill-awakeInBed {
-  background-color: #dbeafe;
+  background-color: var(--fill-awake-bg);
   background-image: repeating-linear-gradient(
     45deg,
     transparent 0,
     transparent 3px,
-    #1e3a8a 3px,
-    #1e3a8a 4px
+    var(--fill-awake-line) 3px,
+    var(--fill-awake-line) 4px
   );
 }
 
 .fill-sleepiness {
-  background-color: #fef3c7;
-  background-image: radial-gradient(circle, #92400e 1.2px, transparent 1.6px);
+  background-color: var(--fill-sleepiness-bg);
+  background-image: radial-gradient(circle, var(--fill-sleepiness-dot) 1.2px, transparent 1.6px);
   background-size: 5px 5px;
 }
 
 /* User-defined fills. Patterns stay distinct from the fixed fills when printed. */
 .fill-custom1 {
-  background-color: #dcfce7;
+  background-color: var(--fill-custom1-bg);
   background-image:
-    repeating-linear-gradient(45deg, #166534 0 1px, transparent 1px 4px),
-    repeating-linear-gradient(-45deg, #166534 0 1px, transparent 1px 4px);
+    repeating-linear-gradient(45deg, var(--fill-custom1-line) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(-45deg, var(--fill-custom1-line) 0 1px, transparent 1px 4px);
 }
 
 .fill-custom2 {
-  background-color: #ede9fe;
-  background-image: repeating-linear-gradient(90deg, #5b21b6 0 1px, transparent 1px 4px);
+  background-color: var(--fill-custom2-bg);
+  background-image: repeating-linear-gradient(90deg, var(--fill-custom2-line) 0 1px, transparent 1px 4px);
 }
 
 .fill-custom3 {
-  background-color: #ffedd5;
-  background-image: repeating-conic-gradient(#9a3412 0% 25%, transparent 0% 50%);
+  background-color: var(--fill-custom3-bg);
+  background-image: repeating-conic-gradient(var(--fill-custom3-line) 0% 25%, transparent 0% 50%);
   background-size: 6px 6px;
 }
 
@@ -80,27 +172,18 @@ button {
   print-color-adjust: exact;
 }
 
-:root {
-  --diary-label-col: 3rem;
-  --diary-total-col: 3.4rem;
-  --diary-cols: 48;
-  --diary-notes-col: 9rem;
-  --diary-line-soft: #f3f4f6; /* 30-minute sub-division (light) */
-  --diary-line-strong: #aeb8c2; /* hour boundary (dark) */
-}
-
 /* Swatch used in the toolbar and legend. */
 .swatch {
   display: inline-block;
   width: 15px;
   height: 15px;
-  border: 1px solid #9ca3af;
+  border: 1px solid var(--color-text-faint);
   border-radius: 3px;
   vertical-align: middle;
 }
 
 .swatch--empty {
-  background-color: #ffffff;
+  background-color: var(--color-surface);
 }
 
 /* --- Diary board layout -------------------------------------------------- */
@@ -110,9 +193,9 @@ button {
   overflow-x: auto;
   user-select: none;
   touch-action: none;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 .diary-row {
@@ -132,9 +215,9 @@ button {
   gap: 4px;
   padding: 0 4px;
   font-size: 0.7rem;
-  background: #f9fafb;
-  border-right: 1px solid #d1d5db;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--color-surface-alt);
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border-soft);
 }
 
 /* Per-day sleep total (HH:MM), pinned right after the Day label. */
@@ -147,16 +230,16 @@ button {
   justify-content: center;
   padding: 0 2px;
   font-size: 0.7rem;
-  background: #f9fafb;
-  border-right: 1px solid #d1d5db;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--color-surface-alt);
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border-soft);
 }
 
 .diary-total--head {
   font-size: 0.62rem;
-  color: #6b7280;
-  background: #ffffff;
-  border-bottom: 1px solid #d1d5db;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .diary-hour {
@@ -164,10 +247,10 @@ button {
   padding: 2px 0;
   text-align: center;
   font-size: 0.62rem;
-  color: #6b7280;
-  background: #ffffff;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
   border-right: 1px solid var(--diary-line-strong);
-  border-bottom: 1px solid #d1d5db;
+  border-bottom: 1px solid var(--color-border);
 }
 
 /* Notes column header, pinned to the right edge of the board. */
@@ -179,10 +262,10 @@ button {
   align-items: center;
   justify-content: center;
   font-size: 0.62rem;
-  color: #6b7280;
-  background: #ffffff;
-  border-left: 1px solid #d1d5db;
-  border-bottom: 1px solid #d1d5db;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border-left: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 /* --- Slot cell ----------------------------------------------------------- */
@@ -194,7 +277,7 @@ button {
   justify-content: center;
   height: 18px;
   border-right: 1px solid var(--diary-line-soft);
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid var(--color-grid-soft);
 }
 
 .slot-cell--hour {
@@ -206,14 +289,14 @@ button {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(59, 130, 246, 0.16);
+  background: var(--color-highlight);
   pointer-events: none;
 }
 
 .slot-cell__icon {
   width: 12px;
   height: 12px;
-  color: #111827;
+  color: var(--color-icon);
   pointer-events: none;
 }
 
@@ -228,22 +311,22 @@ button {
   padding: 0 6px;
   font: inherit;
   font-size: 0.72rem;
-  color: #1f2937;
-  background: #ffffff;
+  color: var(--color-text);
+  background: var(--color-surface);
   border: none;
-  border-left: 1px solid #d1d5db;
-  border-bottom: 1px solid #f3f4f6;
+  border-left: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-grid-soft);
   outline: none;
   -webkit-user-select: text;
   user-select: text;
 }
 
 .day-row__note::placeholder {
-  color: #9ca3af;
+  color: var(--color-text-faint);
 }
 
 .day-row__note:focus {
-  background: #eff6ff;
+  background: var(--color-accent-soft);
 }
 
 /* --- Print rules --------------------------------------------------------- */

@@ -164,8 +164,8 @@ export default {
   position: fixed;
   z-index: 50;
   padding: 4px 8px;
-  background: #111827;
-  color: #ffffff;
+  background: var(--color-tooltip-bg);
+  color: var(--color-tooltip-text);
   font-size: 0.75rem;
   border-radius: 4px;
   pointer-events: none;

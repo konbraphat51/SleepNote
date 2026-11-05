@@ -67,7 +67,7 @@ export default {
   padding: 8px 12px;
   margin-top: 8px;
   font-size: 0.8rem;
-  color: #374151;
+  color: var(--color-legend-text);
 }
 
 .legend__title {
@@ -91,7 +91,7 @@ export default {
     padding: 4px 0;
     gap: 8px;
     font-size: 0.7rem;
-    color: #111827;
+    color: var(--color-text);
     break-inside: avoid;
   }
 

@@ -246,8 +246,8 @@ export default {
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-soft);
   border-radius: 6px;
   margin-bottom: 8px;
 }
@@ -266,13 +266,14 @@ export default {
 
 .toolbar__btn {
   padding: 4px 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
-  background: #ffffff;
+  background: var(--color-surface);
+  color: var(--color-text);
 }
 
 .toolbar__btn:hover {
-  background: #f3f4f6;
+  background: var(--color-surface-hover);
 }
 
 .toolbar__btn:disabled {
@@ -293,7 +294,7 @@ export default {
 
 .toolbar__label {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-text-muted);
   margin-right: 2px;
 }
 
@@ -302,15 +303,16 @@ export default {
   align-items: center;
   gap: 5px;
   padding: 4px 8px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
-  background: #ffffff;
+  background: var(--color-surface);
+  color: var(--color-text);
 }
 
 .toolbar__tool--active {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 1px #2563eb;
-  background: #eff6ff;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
+  background: var(--color-accent-soft);
 }
 
 .toolbar__icon {
@@ -331,10 +333,11 @@ export default {
 .toolbar__custom-name {
   width: 5.5rem;
   padding: 3px 6px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
+  background: var(--color-surface);
   font-size: 0.75rem;
-  color: #1f2937;
+  color: var(--color-text);
 }
 
 .toolbar__file {

@@ -98,7 +98,7 @@ export default {
 
 <style scoped>
 .day-row--today .diary-label {
-  background: #fef3c7;
+  background: var(--color-today);
   font-weight: 700;
 }
 
@@ -111,7 +111,7 @@ export default {
 }
 
 .day-row__weekday {
-  color: #6b7280;
+  color: var(--color-text-muted);
 }
 
 .day-row__total {

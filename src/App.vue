@@ -80,21 +80,21 @@ export default {
 }
 
 .app__tagline {
-  color: #6b7280;
+  color: var(--color-text-muted);
 }
 
 .app__notice {
   margin: 8px 0;
   padding: 8px 12px;
   border-radius: 6px;
-  background: #ecfdf5;
-  color: #047857;
-  border: 1px solid #a7f3d0;
+  background: var(--color-notice-bg);
+  color: var(--color-notice-text);
+  border: 1px solid var(--color-notice-border);
 }
 
 .app__warning {
   margin: 12px 0 0;
-  color: #6b7280;
+  color: var(--color-text-muted);
   font-size: 0.8rem;
 }
 
