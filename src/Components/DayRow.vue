@@ -4,8 +4,8 @@
 import { computed } from 'vue'
 import { useDiaryStore } from '../Composables/DiaryStore.js'
 import { useI18n } from '../I18n/useI18n.js'
-import { SlotsPerDay } from '../Constants/DiaryConstants.js'
-import { getWeekday } from '../Utils/TimeUtil.js'
+import { SlotsPerDay, SlotState, MinutesPerSlot } from '../Constants/DiaryConstants.js'
+import { getWeekday, formatDuration } from '../Utils/TimeUtil.js'
 import SlotCell from './SlotCell.vue'
 
 export default {
@@ -37,6 +37,15 @@ export default {
 
     const isHoverRow = computed(() => props.hoverDay === props.day)
 
+    // Total sleep for this day as "HH:MM", counted from the Sleep slots.
+    const sleepTotal = computed(() => {
+      const sleepSlots = slotIndices.filter(
+        (slotIndex) =>
+          getSlotState(state.viewYear, state.viewMonth, props.day, slotIndex) === SlotState.Sleep,
+      ).length
+      return formatDuration(sleepSlots * MinutesPerSlot)
+    })
+
     // Persist the single-line note for this day.
     function onNoteInput(event) {
       setNote(state.viewYear, state.viewMonth, props.day, event.target.value)
@@ -49,6 +58,7 @@ export default {
       weekdayShort,
       isToday,
       isHoverRow,
+      sleepTotal,
       getSlotState,
       getIconsAt,
       getNote,
@@ -64,6 +74,7 @@ export default {
       <span class="day-row__number">{{ day }}</span>
       <span class="day-row__weekday">{{ weekdayShort }}</span>
     </div>
+    <div class="diary-total day-row__total">{{ sleepTotal }}</div>
     <SlotCell
       v-for="slotIndex in slotIndices"
       :key="slotIndex"
@@ -101,5 +112,9 @@ export default {
 
 .day-row__weekday {
   color: #6b7280;
+}
+
+.day-row__total {
+  font-variant-numeric: tabular-nums;
 }
 </style>

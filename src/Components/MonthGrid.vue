@@ -125,6 +125,7 @@ export default {
     >
       <div class="diary-row month-grid__header">
         <div class="diary-label">{{ t('dayHeader') }}</div>
+        <div class="diary-total diary-total--head">{{ t('sleepTotalHeader') }}</div>
         <div v-for="hour in hourLabels" :key="hour" class="diary-hour">{{ hour }}</div>
         <div class="diary-note-head">{{ t('noteHeader') }}</div>
       </div>

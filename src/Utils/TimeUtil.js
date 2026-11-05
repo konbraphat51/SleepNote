@@ -29,6 +29,11 @@ export function formatSlotTime(slotIndex) {
   return `${pad2(Math.floor(totalMinutes / 60))}:${pad2(totalMinutes % 60)}`
 }
 
+// Format a duration in minutes as "HH:MM".
+export function formatDuration(totalMinutes) {
+  return `${pad2(Math.floor(totalMinutes / 60))}:${pad2(totalMinutes % 60)}`
+}
+
 // Day-of-week for a date (0 = Sunday).
 export function getWeekday(year, monthIndex, day) {
   return new Date(year, monthIndex, day).getDay()

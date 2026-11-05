@@ -82,6 +82,7 @@ button {
 
 :root {
   --diary-label-col: 3rem;
+  --diary-total-col: 3.4rem;
   --diary-cols: 48;
   --diary-notes-col: 9rem;
   --diary-line-soft: #f3f4f6; /* 30-minute sub-division (light) */
@@ -116,7 +117,9 @@ button {
 
 .diary-row {
   display: grid;
-  grid-template-columns: var(--diary-label-col) repeat(var(--diary-cols), minmax(16px, 1fr)) var(--diary-notes-col);
+  grid-template-columns:
+    var(--diary-label-col) var(--diary-total-col) repeat(var(--diary-cols), minmax(16px, 1fr))
+    var(--diary-notes-col);
 }
 
 .diary-label {
@@ -132,6 +135,28 @@ button {
   background: #f9fafb;
   border-right: 1px solid #d1d5db;
   border-bottom: 1px solid #e5e7eb;
+}
+
+/* Per-day sleep total (HH:MM), pinned right after the Day label. */
+.diary-total {
+  position: sticky;
+  left: var(--diary-label-col);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2px;
+  font-size: 0.7rem;
+  background: #f9fafb;
+  border-right: 1px solid #d1d5db;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.diary-total--head {
+  font-size: 0.62rem;
+  color: #6b7280;
+  background: #ffffff;
+  border-bottom: 1px solid #d1d5db;
 }
 
 .diary-hour {
@@ -243,7 +268,9 @@ button {
   }
 
   .diary-row {
-    grid-template-columns: var(--diary-label-col) repeat(var(--diary-cols), minmax(0, 1fr)) var(--diary-notes-col);
+    grid-template-columns:
+      var(--diary-label-col) var(--diary-total-col) repeat(var(--diary-cols), minmax(0, 1fr))
+      var(--diary-notes-col);
   }
 
   .slot-cell {
