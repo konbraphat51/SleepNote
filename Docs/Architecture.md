@@ -74,7 +74,7 @@ Persistence: every mutation calls `saveDiary()`, which debounces (300 ms) a writ
 ## Phone and touch
 
 - **Layout** — below 640px the label, total and notes columns shrink, slots grow to 22px tall, and the board scrolls horizontally. The Day, Sleep and Notes columns stay pinned while the slots scroll.
-- **Touch scrolls by default** — `.diary-board` uses `touch-action: pan-x pan-y`. A touch counts as a tap only if the browser did not take over for scrolling. `MonthGrid` applies the tool on `pointerup`, and `pointercancel` discards the pending tap, so a swipe never paints.
+- **Touch scrolls by default** — `.diary-board` uses `touch-action: pan-x pan-y`. A touch counts as a tap only if the browser did not take over for scrolling. `MonthGrid` applies the tool on `pointerup`, and `pointercancel` discards the pending tap, so a swipe never paints. A tap on a slot that already shows the active fill clears it (`DiaryStore.tapActiveTool`), so tapping twice toggles the fill off.
 - **Drag-paint switch** — `state.touchDragPaint` (UI only, not persisted) is shown on coarse pointers only. When on, the board uses `touch-action: none` and touch drags paint like the mouse does. When off, the board scrolls.
 - **Input zoom** — the note field is 16px on phones so iOS does not zoom when it is focused.
 
