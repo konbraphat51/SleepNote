@@ -6,7 +6,7 @@
 App.vue
 ├── DiaryToolbar.vue   — month navigation, paint tools, icons, JSON/PDF, language toggle
 ├── MonthGrid.vue      — month board (hour header + day rows); handles drag-paint and tooltip
-│   └── DayRow.vue     — one day: date label + 48 slot cells
+│   └── DayRow.vue     — one day: date label + sleep total (HH:MM) + 48 slot cells
 │       └── SlotCell.vue — one 30-minute slot: fill pattern + optional icons
 └── DiaryLegend.vue    — legend of fill patterns and icons
 ```
@@ -67,6 +67,7 @@ Persistence: every mutation calls `saveDiary()`, which debounces (300 ms) a writ
 - **Drag paint** — `MonthGrid` listens for `pointerdown` / `pointermove` / `pointerup` / `pointerleave` on the board. A left-button `pointerdown` on a cell (`[data-slot]`) applies the active tool and, for state tools, records the starting day (`paintDay`) and sets `painting = true`. While `painting`, `pointermove` applies the tool to every cell entered — but only within the day row where the drag started, so an accidental drag into another day paints nothing there. Icon tools apply on a single click (no drag).
 - **Right-click erase** — a `contextmenu` (right-click) on a painted slot clears its fill (`setSlotState` to `Empty`), mirroring the eraser tool; the native context menu is suppressed on the board.
 - **Icon toggle** — with an icon tool active, clicking a slot calls `toggleIconAt`, which adds the icon if absent and removes it if present.
+- **Sleep total** — each `DayRow` counts its own `S` (sleep) slots and shows the sum as `HH:MM` in the column after the day label. It is computed from the store on every change, so it updates while painting and on undo/redo. Only the fixed sleep fill counts; awake-in-bed, sleepiness and custom fills do not.
 - **Tooltip and hover crosshair** — on `pointermove`, `MonthGrid` resolves the hovered cell with `document.elementFromPoint` and shows a tooltip such as `11/5 (Wed) 04:00`; the hovered cell's row and column are lightly highlighted (`slot-cell--highlight`) by passing the hovered day/slot down to `DayRow` / `SlotCell`.
 - **Undo / Redo** — the store keeps a snapshot history (`past` / `future` stacks); mutations within 500 ms (a drag) coalesce into a single undo step. Toolbar buttons and Ctrl+Z / Ctrl+Shift+Z trigger undo/redo.
 
