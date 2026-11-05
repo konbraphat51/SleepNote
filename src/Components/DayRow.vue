@@ -91,6 +91,10 @@ export default {
   font-weight: 700;
 }
 
+.day-row__label {
+  justify-content: flex-start;
+}
+
 .day-row__number {
   font-weight: 600;
 }
