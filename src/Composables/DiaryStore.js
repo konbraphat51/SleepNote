@@ -17,7 +17,7 @@ const DiaryVersion = 1
 
 // Build an empty month payload.
 function createEmptyMonth() {
-  return { slots: {}, icons: [] }
+  return { slots: {}, icons: [], notes: {} }
 }
 
 // Build an empty diary document.
@@ -186,6 +186,24 @@ function setSlotState(year, monthIndex, day, slotIndex, slotState) {
   saveDiary()
 }
 
+// Read the free-text note for one day (empty string when absent).
+function getNote(year, monthIndex, day) {
+  const month = state.diary.months[formatMonthKey(year, monthIndex)]
+  return month?.notes?.[String(day)] ?? ''
+}
+
+// Write (or clear) the free-text note for one day and persist.
+function setNote(year, monthIndex, day, text) {
+  markDirty()
+  const month = getMonthData(year, monthIndex)
+  if (!month.notes) month.notes = {}
+  const dayKey = String(day)
+  const value = text ?? ''
+  if (value === '') delete month.notes[dayKey]
+  else month.notes[dayKey] = value
+  saveDiary()
+}
+
 // List the icons placed on one slot.
 function getIconsAt(year, monthIndex, day, slotIndex) {
   const month = state.diary.months[formatMonthKey(year, monthIndex)]
@@ -273,6 +291,8 @@ export function useDiaryStore() {
     state,
     getSlotState,
     setSlotState,
+    getNote,
+    setNote,
     getIconsAt,
     toggleIconAt,
     applyActiveTool,

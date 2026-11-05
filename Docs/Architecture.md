@@ -21,7 +21,8 @@ The whole diary is a single JSON document, serialized to a cookie and to exporte
   "months": {
     "2026-11": {
       "slots": { "5": "..SSSSAAD...SSSS..." },
-      "icons": [ { "day": 5, "slot": 8, "type": "medication" } ]
+      "icons": [ { "day": 5, "slot": 8, "type": "medication" } ],
+      "notes": { "5": "Caffeine at 15:00" }
     }
   }
 }
@@ -31,6 +32,7 @@ The whole diary is a single JSON document, serialized to a cookie and to exporte
 - `months` — keyed by `"YYYY-MM"` (from `TimeUtil.formatMonthKey`).
 - `slots` — keyed by the day number as a string; each value is a 48-character row, one character per 30-minute slot.
 - `icons` — array of `{ day, slot, type }`; `type` is `medication` or `meal`.
+- `notes` — keyed by the day number as a string; each value is a single-line free-text remark (optional; older documents omit it).
 
 Slot characters (`DiaryConstants`):
 

@@ -17,7 +17,7 @@ export default {
     hoverSlot: { type: Number, default: null },
   },
   setup(props) {
-    const { state, getSlotState, getIconsAt } = useDiaryStore()
+    const { state, getSlotState, getIconsAt, getNote, setNote } = useDiaryStore()
     const { t } = useI18n()
 
     const slotIndices = Array.from({ length: SlotsPerDay }, (_, i) => i)
@@ -37,7 +37,23 @@ export default {
 
     const isHoverRow = computed(() => props.hoverDay === props.day)
 
-    return { state, slotIndices, weekdayShort, isToday, isHoverRow, getSlotState, getIconsAt }
+    // Persist the single-line note for this day.
+    function onNoteInput(event) {
+      setNote(state.viewYear, state.viewMonth, props.day, event.target.value)
+    }
+
+    return {
+      state,
+      t,
+      slotIndices,
+      weekdayShort,
+      isToday,
+      isHoverRow,
+      getSlotState,
+      getIconsAt,
+      getNote,
+      onNoteInput,
+    }
   },
 }
 </script>
@@ -56,6 +72,15 @@ export default {
       :state="getSlotState(state.viewYear, state.viewMonth, day, slotIndex)"
       :icons="getIconsAt(state.viewYear, state.viewMonth, day, slotIndex)"
       :highlight="isHoverRow || slotIndex === hoverSlot"
+    />
+    <input
+      class="day-row__note"
+      type="text"
+      :value="getNote(state.viewYear, state.viewMonth, day)"
+      :placeholder="t('notePlaceholder')"
+      :aria-label="t('noteHeader')"
+      maxlength="60"
+      @input="onNoteInput"
     />
   </div>
 </template>

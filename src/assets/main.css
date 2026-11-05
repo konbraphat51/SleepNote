@@ -60,6 +60,7 @@ button {
 :root {
   --diary-label-col: 3rem;
   --diary-cols: 48;
+  --diary-notes-col: 9rem;
   --diary-line-soft: #f3f4f6; /* 30-minute sub-division (light) */
   --diary-line-strong: #aeb8c2; /* hour boundary (dark) */
 }
@@ -92,7 +93,7 @@ button {
 
 .diary-row {
   display: grid;
-  grid-template-columns: var(--diary-label-col) repeat(var(--diary-cols), minmax(16px, 1fr));
+  grid-template-columns: var(--diary-label-col) repeat(var(--diary-cols), minmax(16px, 1fr)) var(--diary-notes-col);
 }
 
 .diary-label {
@@ -118,6 +119,21 @@ button {
   color: #6b7280;
   background: #ffffff;
   border-right: 1px solid var(--diary-line-strong);
+  border-bottom: 1px solid #d1d5db;
+}
+
+/* Notes column header, pinned to the right edge of the board. */
+.diary-note-head {
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.62rem;
+  color: #6b7280;
+  background: #ffffff;
+  border-left: 1px solid #d1d5db;
   border-bottom: 1px solid #d1d5db;
 }
 
@@ -153,6 +169,35 @@ button {
   pointer-events: none;
 }
 
+/* Per-day note input, pinned to the right edge of the board. */
+.day-row__note {
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  width: 100%;
+  height: 18px;
+  min-height: 0;
+  padding: 0 6px;
+  font: inherit;
+  font-size: 0.72rem;
+  color: #1f2937;
+  background: #ffffff;
+  border: none;
+  border-left: 1px solid #d1d5db;
+  border-bottom: 1px solid #f3f4f6;
+  outline: none;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.day-row__note::placeholder {
+  color: #9ca3af;
+}
+
+.day-row__note:focus {
+  background: #eff6ff;
+}
+
 /* --- Print rules --------------------------------------------------------- */
 
 @media print {
@@ -175,10 +220,15 @@ button {
   }
 
   .diary-row {
-    grid-template-columns: var(--diary-label-col) repeat(var(--diary-cols), minmax(0, 1fr));
+    grid-template-columns: var(--diary-label-col) repeat(var(--diary-cols), minmax(0, 1fr)) var(--diary-notes-col);
   }
 
   .slot-cell {
+    height: 20px;
+  }
+
+  .day-row__note {
+    position: static;
     height: 20px;
   }
 

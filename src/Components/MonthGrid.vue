@@ -80,6 +80,7 @@ export default {
     function onContextMenu(event) {
       const cell = cellAt(event.clientX, event.clientY)
       if (!cell) return
+      event.preventDefault()
       if (getSlotState(state.viewYear, state.viewMonth, cell.day, cell.slot) === SlotState.Empty) return
       setSlotState(state.viewYear, state.viewMonth, cell.day, cell.slot, SlotState.Empty)
     }
@@ -120,11 +121,12 @@ export default {
       @pointerup="stopPainting"
       @pointercancel="stopPainting"
       @pointerleave="onPointerLeave"
-      @contextmenu.prevent="onContextMenu"
+      @contextmenu="onContextMenu"
     >
       <div class="diary-row month-grid__header">
         <div class="diary-label">{{ t('dayHeader') }}</div>
         <div v-for="hour in hourLabels" :key="hour" class="diary-hour">{{ hour }}</div>
+        <div class="diary-note-head">{{ t('noteHeader') }}</div>
       </div>
       <DayRow
         v-for="day in days"

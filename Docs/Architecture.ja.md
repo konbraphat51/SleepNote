@@ -21,7 +21,8 @@ App.vue
   "months": {
     "2026-11": {
       "slots": { "5": "..SSSSAAD...SSSS..." },
-      "icons": [ { "day": 5, "slot": 8, "type": "medication" } ]
+      "icons": [ { "day": 5, "slot": 8, "type": "medication" } ],
+      "notes": { "5": "15時にカフェイン" }
     }
   }
 }
@@ -31,6 +32,7 @@ App.vue
 - `months` — `"YYYY-MM"`（`TimeUtil.formatMonthKey` が生成）をキーとする。
 - `slots` — 日番号の文字列をキーとし、値は48文字の行（30分スロットごとに1文字）。
 - `icons` — `{ day, slot, type }` の配列。`type` は `medication` または `meal`。
+- `notes` — 日番号の文字列をキーとし、値は1行の備考テキスト（任意。古いデータには存在しない）。
 
 スロット文字（`DiaryConstants`）:
 
