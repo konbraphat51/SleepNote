@@ -170,4 +170,11 @@ export default {
   pointer-events: none;
   white-space: nowrap;
 }
+
+@media print {
+  .month-grid__title {
+    margin: 0 0 4px;
+    font-size: 0.9rem;
+  }
+}
 </style>

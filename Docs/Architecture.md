@@ -67,7 +67,7 @@ Persistence: every mutation calls `saveDiary()`, which debounces (300 ms) a writ
 
 ## PDF / print
 
-PDF is produced by the browser's own print dialog (Save as PDF), not by a library: `DiaryToolbar` calls `window.print()`. `src/assets/main.css` defines an `@media print` block with `@page { size: A4 landscape; margin: 10mm }`. It hides every `.no-print` element (header, toolbar, legend, warning) and cleans up the grid borders/overflow so only the month board prints. `print-color-adjust: exact` forces the background fills, and the three patterns (solid / diagonal hatch / dots) are chosen to stay distinguishable in black and white.
+PDF is produced by the browser's own print dialog (Save as PDF), not by a library: `DiaryToolbar` calls `window.print()`. `src/assets/main.css` defines an `@media print` block with `@page { size: A4 landscape; margin: 10mm }`. It hides every `.no-print` element (header, toolbar, warning) and cleans up the grid borders/overflow; the month board prints together with a compact legend so everything fits on one A4 page. `print-color-adjust: exact` forces the background fills, and the three patterns (solid / diagonal hatch / dots) are chosen to stay distinguishable in black and white.
 
 ## Class diagram
 

@@ -97,4 +97,16 @@ export default {
   color: #6b7280;
   font-size: 0.8rem;
 }
+
+@media print {
+  .app {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .app__notice {
+    display: none;
+  }
+}
 </style>

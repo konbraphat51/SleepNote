@@ -67,7 +67,7 @@ App.vue
 
 ## PDF / 印刷
 
-PDFはライブラリではなくブラウザの印刷ダイアログ（PDFに保存）で生成します。`DiaryToolbar` が `window.print()` を呼び出します。`src/assets/main.css` の `@media print` ブロックは `@page { size: A4 landscape; margin: 10mm }` を定義し、`.no-print` 要素（ヘッダー・ツールバー・凡例・警告）を非表示にして、月ボードだけが印刷されるようグリッドの枠線とオーバーフローを整えます。`print-color-adjust: exact` で背景の塗りを強制し、3つのパターン（塗りつぶし / 斜線ハッチ / ドット）はモノクロ印刷でも区別できるよう設計されています。
+PDFはライブラリではなくブラウザの印刷ダイアログ（PDFに保存）で生成します。`DiaryToolbar` が `window.print()` を呼び出します。`src/assets/main.css` の `@media print` ブロックは `@page { size: A4 landscape; margin: 10mm }` を定義し、`.no-print` 要素（ヘッダー・ツールバー・警告）を非表示にし、月ボードにコンパクトな凡例を添えて1ページ（A4）に収まるようグリッドの枠線とオーバーフローを整えます。`print-color-adjust: exact` で背景の塗りを強制し、3つのパターン（塗りつぶし / 斜線ハッチ / ドット）はモノクロ印刷でも区別できるよう設計されています。
 
 ## クラス図
 

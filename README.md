@@ -51,7 +51,7 @@ All diary data is stored in a single browser cookie (`sleepnote_diary`). A brows
 
 ## PDF export
 
-Click **PDF / Print** in the toolbar to open the browser print dialog, then choose **Save as PDF**. The print stylesheet uses A4 landscape and prints only the current month grid (the toolbar, legend, and warnings are hidden). The three fill patterns — solid, diagonal hatch, and dots — are designed to stay distinct when printed in black and white.
+Click **PDF / Print** in the toolbar to open the browser print dialog, then choose **Save as PDF**. The print stylesheet uses A4 landscape and prints the current month grid together with the legend on a single page (the toolbar, header, and warnings are hidden). The three fill patterns — solid, diagonal hatch, and dots — are designed to stay distinct when printed in black and white.
 
 ## GitHub Pages deployment
 

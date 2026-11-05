@@ -13,7 +13,7 @@ export default {
 </script>
 
 <template>
-  <div class="legend no-print">
+  <div class="legend">
     <span class="legend__title">{{ t('legendTitle') }}</span>
     <span class="legend__item"><span class="swatch fill-sleep"></span>{{ t('legendSleep') }}</span>
     <span class="legend__item"><span class="swatch fill-awakeInBed"></span>{{ t('legendAwakeInBed') }}</span>
@@ -61,5 +61,21 @@ export default {
 .legend__icon {
   width: 14px;
   height: 14px;
+}
+
+@media print {
+  .legend {
+    margin-top: 4px;
+    padding: 4px 0;
+    gap: 8px;
+    font-size: 0.7rem;
+    color: #111827;
+    break-inside: avoid;
+  }
+
+  .legend__icon {
+    width: 12px;
+    height: 12px;
+  }
 }
 </style>
