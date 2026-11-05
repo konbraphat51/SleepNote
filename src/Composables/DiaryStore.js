@@ -261,6 +261,19 @@ function applyActiveTool(year, monthIndex, day, slotIndex) {
   }
 }
 
+// Tap on a slot: a fill tool clears the slot when it already shows that fill (toggle).
+function tapActiveTool(year, monthIndex, day, slotIndex) {
+  const tool = state.activeTool
+  const isSameFill =
+    tool.kind === 'state' && tool.value !== SlotState.Empty &&
+    getSlotState(year, monthIndex, day, slotIndex) === tool.value
+  if (isSameFill) {
+    setSlotState(year, monthIndex, day, slotIndex, SlotState.Empty)
+  } else {
+    applyActiveTool(year, monthIndex, day, slotIndex)
+  }
+}
+
 // Move the visible month by a delta (in months).
 function changeMonth(delta) {
   const target = new Date(state.viewYear, state.viewMonth + delta, 1)
@@ -327,6 +340,7 @@ export function useDiaryStore() {
     getIconsAt,
     toggleIconAt,
     applyActiveTool,
+    tapActiveTool,
     changeMonth,
     goToToday,
     setActiveTool,

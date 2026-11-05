@@ -12,7 +12,7 @@ export default {
   name: 'MonthGrid',
   components: { DayRow },
   setup() {
-    const { state, getSlotState, setSlotState, applyActiveTool } = useDiaryStore()
+    const { state, getSlotState, setSlotState, applyActiveTool, tapActiveTool } = useDiaryStore()
     const { t, monthTitle } = useI18n()
 
     const days = computed(() =>
@@ -83,10 +83,10 @@ export default {
       paintDay = null
     }
 
-    // A lifted touch that never turned into a scroll counts as a tap.
+    // A lifted touch that never turned into a scroll counts as a tap (tapping a filled slot clears it).
     function onPointerUp() {
       if (pendingTap) {
-        applyActiveTool(state.viewYear, state.viewMonth, pendingTap.day, pendingTap.slot)
+        tapActiveTool(state.viewYear, state.viewMonth, pendingTap.day, pendingTap.slot)
         pendingTap = null
       }
       stopPainting()
