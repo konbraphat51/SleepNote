@@ -7,10 +7,11 @@ import { useI18n } from './I18n/useI18n.js'
 import DiaryToolbar from './Components/DiaryToolbar.vue'
 import DiaryLegend from './Components/DiaryLegend.vue'
 import MonthGrid from './Components/MonthGrid.vue'
+import DayFocus from './Components/DayFocus.vue'
 
 export default {
   name: 'App',
-  components: { DiaryToolbar, DiaryLegend, MonthGrid },
+  components: { DiaryToolbar, DiaryLegend, MonthGrid, DayFocus },
   setup() {
     const { state, undo, redo } = useDiaryStore()
     const { t } = useI18n()
@@ -52,7 +53,8 @@ export default {
 
     <p v-if="state.notice" class="app__notice">{{ state.notice }}</p>
 
-    <MonthGrid />
+    <MonthGrid v-if="state.viewMode === 'month'" />
+    <DayFocus v-else />
 
     <DiaryLegend />
 

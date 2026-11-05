@@ -19,6 +19,7 @@ export default {
       redo,
       setActiveTool,
       toggleTouchDragPaint,
+      setViewMode,
       setLanguage,
       exportJson,
       importJson,
@@ -92,6 +93,7 @@ export default {
       redo,
       setActiveTool,
       toggleTouchDragPaint,
+      setViewMode,
       setLanguage,
       isActive,
       fileInput,
@@ -117,6 +119,22 @@ export default {
       <span class="toolbar__month">{{ monthTitle(state.viewYear, state.viewMonth) }}</span>
       <button class="toolbar__btn" :title="t('nextMonth')" @click="changeMonth(1)">›</button>
       <button class="toolbar__btn" @click="goToToday">{{ t('today') }}</button>
+      <button
+        class="toolbar__tool"
+        :class="{ 'toolbar__tool--active': state.viewMode === 'month' }"
+        :aria-pressed="state.viewMode === 'month'"
+        @click="setViewMode('month')"
+      >
+        {{ t('viewMonth') }}
+      </button>
+      <button
+        class="toolbar__tool"
+        :class="{ 'toolbar__tool--active': state.viewMode === 'day' }"
+        :aria-pressed="state.viewMode === 'day'"
+        @click="setViewMode('day')"
+      >
+        {{ t('viewDay') }}
+      </button>
     </div>
 
     <div class="toolbar__group">
@@ -267,6 +285,7 @@ export default {
 
 .toolbar__nav {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 6px;
 }

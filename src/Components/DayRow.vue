@@ -4,7 +4,7 @@
 import { computed } from 'vue'
 import { useDiaryStore } from '../Composables/DiaryStore.js'
 import { useI18n } from '../I18n/useI18n.js'
-import { SlotsPerDay, SlotState, MinutesPerSlot } from '../Constants/DiaryConstants.js'
+import { SlotsPerDay } from '../Constants/DiaryConstants.js'
 import { getWeekday, formatDuration } from '../Utils/TimeUtil.js'
 import SlotCell from './SlotCell.vue'
 
@@ -17,7 +17,15 @@ export default {
     hoverSlot: { type: Number, default: null },
   },
   setup(props) {
-    const { state, getSlotState, getIconsAt, getNote, setNote } = useDiaryStore()
+    const {
+      state,
+      getSlotState,
+      getIconsAt,
+      getNote,
+      setNote,
+      getSleepMinutes,
+      openDayView,
+    } = useDiaryStore()
     const { t } = useI18n()
 
     const slotIndices = Array.from({ length: SlotsPerDay }, (_, i) => i)
@@ -38,13 +46,9 @@ export default {
     const isHoverRow = computed(() => props.hoverDay === props.day)
 
     // Total sleep for this day as "HH:MM", counted from the Sleep slots.
-    const sleepTotal = computed(() => {
-      const sleepSlots = slotIndices.filter(
-        (slotIndex) =>
-          getSlotState(state.viewYear, state.viewMonth, props.day, slotIndex) === SlotState.Sleep,
-      ).length
-      return formatDuration(sleepSlots * MinutesPerSlot)
-    })
+    const sleepTotal = computed(() =>
+      formatDuration(getSleepMinutes(state.viewYear, state.viewMonth, props.day)),
+    )
 
     // Persist the single-line note for this day.
     function onNoteInput(event) {
@@ -59,6 +63,7 @@ export default {
       isToday,
       isHoverRow,
       sleepTotal,
+      openDayView,
       getSlotState,
       getIconsAt,
       getNote,
@@ -70,7 +75,7 @@ export default {
 
 <template>
   <div class="diary-row day-row" :class="{ 'day-row--today': isToday }">
-    <div class="diary-label day-row__label">
+    <div class="diary-label day-row__label" @click="openDayView(day)">
       <span class="day-row__number">{{ day }}</span>
       <span class="day-row__weekday">{{ weekdayShort }}</span>
     </div>
@@ -104,6 +109,7 @@ export default {
 
 .day-row__label {
   justify-content: flex-start;
+  cursor: pointer;
 }
 
 .day-row__number {

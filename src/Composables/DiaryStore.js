@@ -6,6 +6,7 @@ import {
   SlotState,
   SlotStateChar,
   CharSlotState,
+  MinutesPerSlot,
 } from '../Constants/DiaryConstants.js'
 import { formatMonthKey } from '../Utils/TimeUtil.js'
 import { readCookie, writeCookie } from '../Utils/CookieUtil.js'
@@ -49,6 +50,9 @@ const today = new Date()
 const state = reactive({
   viewYear: today.getFullYear(),
   viewMonth: today.getMonth(),
+  // UI-only (not persisted): 'month' board or the single-day 'day' focus view.
+  viewMode: 'month',
+  focusDay: today.getDate(),
   language: readCookie(LanguageCookieName) === Locale.Ja ? Locale.Ja : Locale.En,
   activeTool: { kind: 'state', value: SlotState.Sleep },
   // UI-only (not persisted): whether touch drags paint instead of scrolling.
@@ -279,6 +283,37 @@ function changeMonth(delta) {
   const target = new Date(state.viewYear, state.viewMonth + delta, 1)
   state.viewYear = target.getFullYear()
   state.viewMonth = target.getMonth()
+  // Keep the focused day inside the new month.
+  const lastDay = new Date(state.viewYear, state.viewMonth + 1, 0).getDate()
+  state.focusDay = Math.min(state.focusDay, lastDay)
+}
+
+// Switch the UI to the single-day view for the given day of the visible month.
+function openDayView(day) {
+  state.focusDay = day
+  state.viewMode = 'day'
+}
+
+// Switch between the month board and the single-day view.
+function setViewMode(mode) {
+  state.viewMode = mode
+}
+
+// Move the focused day by a delta, crossing month boundaries as needed.
+function shiftFocusDay(delta) {
+  const target = new Date(state.viewYear, state.viewMonth, state.focusDay + delta)
+  state.viewYear = target.getFullYear()
+  state.viewMonth = target.getMonth()
+  state.focusDay = target.getDate()
+}
+
+// Sleep minutes for one day, counted from its fixed Sleep slots.
+function getSleepMinutes(year, monthIndex, day) {
+  let sleepSlots = 0
+  for (let slotIndex = 0; slotIndex < SlotsPerDay; slotIndex++) {
+    if (getSlotState(year, monthIndex, day, slotIndex) === SlotState.Sleep) sleepSlots++
+  }
+  return sleepSlots * MinutesPerSlot
 }
 
 // Jump the view to the current month.
@@ -286,6 +321,7 @@ function goToToday() {
   const now = new Date()
   state.viewYear = now.getFullYear()
   state.viewMonth = now.getMonth()
+  state.focusDay = now.getDate()
 }
 
 // Set the active tool.
@@ -341,6 +377,10 @@ export function useDiaryStore() {
     toggleIconAt,
     applyActiveTool,
     tapActiveTool,
+    getSleepMinutes,
+    openDayView,
+    setViewMode,
+    shiftFocusDay,
     changeMonth,
     goToToday,
     setActiveTool,
