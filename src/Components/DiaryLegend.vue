@@ -1,13 +1,24 @@
 <script>
 // SleepNote — legend explaining the fill patterns and icons.
 
+import { computed } from 'vue'
+import { useDiaryStore } from '../Composables/DiaryStore.js'
 import { useI18n } from '../I18n/useI18n.js'
+import { CustomFillStates } from '../Constants/DiaryConstants.js'
 
 export default {
   name: 'DiaryLegend',
   setup() {
     const { t } = useI18n()
-    return { t }
+    const { getCustomLabel } = useDiaryStore()
+    // User-defined fills: the label is the user's own, falling back to the default name.
+    const customFills = computed(() =>
+      CustomFillStates.map((key, index) => ({
+        key,
+        label: getCustomLabel(key) || t(`customDefault${index + 1}`),
+      })),
+    )
+    return { t, customFills }
   },
 }
 </script>
@@ -18,6 +29,9 @@ export default {
     <span class="legend__item"><span class="swatch fill-sleep"></span>{{ t('legendSleep') }}</span>
     <span class="legend__item"><span class="swatch fill-awakeInBed"></span>{{ t('legendAwakeInBed') }}</span>
     <span class="legend__item"><span class="swatch fill-sleepiness"></span>{{ t('legendSleepiness') }}</span>
+    <span v-for="fill in customFills" :key="fill.key" class="legend__item">
+      <span class="swatch" :class="`fill-${fill.key}`"></span>{{ fill.label }}
+    </span>
     <span class="legend__item">
       <svg viewBox="0 0 24 24" class="legend__icon" aria-hidden="true">
         <rect x="2" y="9" width="20" height="6" rx="3" fill="none" stroke="currentColor" stroke-width="2" />

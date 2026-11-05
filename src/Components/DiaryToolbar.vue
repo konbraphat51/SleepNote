@@ -5,7 +5,7 @@ import { ref } from 'vue'
 import { useDiaryStore } from '../Composables/DiaryStore.js'
 import { useI18n } from '../I18n/useI18n.js'
 import { formatMonthKey } from '../Utils/TimeUtil.js'
-import { SlotState, IconType } from '../Constants/DiaryConstants.js'
+import { SlotState, IconType, CustomFillStates } from '../Constants/DiaryConstants.js'
 import { Locale } from '../I18n/Locales.js'
 
 export default {
@@ -22,12 +22,25 @@ export default {
       exportJson,
       importJson,
       showNotice,
+      getCustomLabel,
+      setCustomLabel,
     } = useDiaryStore()
     const { t, monthTitle } = useI18n()
     const fileInput = ref(null)
 
+    // The three user-defined fills, in display order.
+    const customFills = CustomFillStates.map((key, index) => ({
+      key,
+      defaultKey: `customDefault${index + 1}`,
+    }))
+
     const isActive = (kind, value) =>
       state.activeTool.kind === kind && state.activeTool.value === value
+
+    // Persist a user-defined fill label as the user types.
+    function onCustomLabelInput(stateKey, event) {
+      setCustomLabel(stateKey, event.target.value)
+    }
 
     // Download the diary document as a JSON file named after the visible month.
     function onExportJson() {
@@ -84,6 +97,9 @@ export default {
       onImportClick,
       onImportChange,
       onExportPdf,
+      customFills,
+      getCustomLabel,
+      onCustomLabelInput,
       SlotState,
       IconType,
       Locale,
@@ -136,6 +152,29 @@ export default {
       >
         <span class="swatch swatch--empty"></span>{{ t('toolEraser') }}
       </button>
+    </div>
+
+    <div class="toolbar__group">
+      <span class="toolbar__label">{{ t('customFillsTitle') }}</span>
+      <div v-for="fill in customFills" :key="fill.key" class="toolbar__custom">
+        <button
+          class="toolbar__tool toolbar__tool--swatch"
+          :class="{ 'toolbar__tool--active': isActive('state', fill.key) }"
+          :title="getCustomLabel(fill.key) || t(fill.defaultKey)"
+          @click="setActiveTool('state', fill.key)"
+        >
+          <span class="swatch" :class="`fill-${fill.key}`"></span>
+        </button>
+        <input
+          class="toolbar__custom-name"
+          type="text"
+          :value="getCustomLabel(fill.key)"
+          :placeholder="t(fill.defaultKey)"
+          :aria-label="t('customFillsTitle')"
+          maxlength="16"
+          @input="onCustomLabelInput(fill.key, $event)"
+        />
+      </div>
     </div>
 
     <div class="toolbar__group">
@@ -265,6 +304,25 @@ export default {
 .toolbar__icon {
   width: 14px;
   height: 14px;
+}
+
+.toolbar__custom {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toolbar__tool--swatch {
+  padding: 3px 4px;
+}
+
+.toolbar__custom-name {
+  width: 5.5rem;
+  padding: 3px 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: #1f2937;
 }
 
 .toolbar__file {
