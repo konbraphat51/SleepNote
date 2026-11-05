@@ -33,7 +33,7 @@ The whole diary is a single JSON document, serialized to a cookie and to exporte
 - `customLabels` — user-defined names for the three custom fills (`custom1`–`custom3`); a missing key falls back to the localized default name (optional; older documents omit it).
 - `months` — keyed by `"YYYY-MM"` (from `TimeUtil.formatMonthKey`).
 - `slots` — keyed by the day number as a string; each value is a 48-character row, one character per 30-minute slot.
-- `icons` — array of `{ day, slot, type }`; `type` is `medication` or `meal`.
+- `icons` — array of `{ day, slot, type }`; `type` is `medication`, `meal`, or `coffee`.
 - `notes` — keyed by the day number as a string; each value is a single-line free-text remark (optional; older documents omit it).
 
 Slot characters (`DiaryConstants`):
@@ -56,7 +56,7 @@ Slot characters (`DiaryConstants`):
 
 - `viewYear` / `viewMonth` — the visible month (`viewMonth` is 0-based).
 - `language` — `en` or `ja`.
-- `activeTool` — `{ kind, value }`; `kind` is `state` (Sleep / Awake in bed / Daytime sleepiness / the three user-defined fills, with Eraser mapped to Empty) or `icon` (medication / meal).
+- `activeTool` — `{ kind, value }`; `kind` is `state` (Sleep / Awake in bed / Daytime sleepiness / the three user-defined fills, with Eraser mapped to Empty) or `icon` (medication / meal / coffee).
 - `diary` — the document described above.
 - `notice` — a transient status message.
 

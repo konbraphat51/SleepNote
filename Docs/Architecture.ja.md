@@ -33,7 +33,7 @@ App.vue
 - `customLabels` — カスタム塗り3種（`custom1`〜`custom3`）のユーザー定義名。キーが無ければローカライズ済みの既定名を使う（任意。古いデータには存在しない）。
 - `months` — `"YYYY-MM"`（`TimeUtil.formatMonthKey` が生成）をキーとする。
 - `slots` — 日番号の文字列をキーとし、値は48文字の行（30分スロットごとに1文字）。
-- `icons` — `{ day, slot, type }` の配列。`type` は `medication` または `meal`。
+- `icons` — `{ day, slot, type }` の配列。`type` は `medication`、`meal`、または `coffee`。
 - `notes` — 日番号の文字列をキーとし、値は1行の備考テキスト（任意。古いデータには存在しない）。
 
 スロット文字（`DiaryConstants`）:
@@ -56,7 +56,7 @@ App.vue
 
 - `viewYear` / `viewMonth` — 表示中の月（`viewMonth` は0始まり）。
 - `language` — `en` または `ja`。
-- `activeTool` — `{ kind, value }`。`kind` は `state`（睡眠 / 在床覚醒 / 活動中眠気 / ユーザー定義の塗り3種。消しゴムは Empty に対応）または `icon`（服薬 / 食事）。
+- `activeTool` — `{ kind, value }`。`kind` は `state`（睡眠 / 在床覚醒 / 活動中眠気 / ユーザー定義の塗り3種。消しゴムは Empty に対応）または `icon`（服薬 / 食事 / コーヒー）。
 - `diary` — 上記のドキュメント。
 - `notice` — 一時的なステータスメッセージ。
 
