@@ -3,8 +3,9 @@
 
 import { ref, computed } from 'vue'
 import { useDiaryStore } from '../Composables/DiaryStore.js'
+import { usePaintGesture } from '../Composables/PaintGesture.js'
 import { useI18n } from '../I18n/useI18n.js'
-import { SlotsPerDay, SlotState } from '../Constants/DiaryConstants.js'
+import { SlotsPerDay } from '../Constants/DiaryConstants.js'
 import { getDaysInMonth, formatSlotTime, getWeekday } from '../Utils/TimeUtil.js'
 import DayRow from './DayRow.vue'
 
@@ -12,8 +13,9 @@ export default {
   name: 'MonthGrid',
   components: { DayRow },
   setup() {
-    const { state, getSlotState, setSlotState, applyActiveTool, tapActiveTool } = useDiaryStore()
+    const { state } = useDiaryStore()
     const { t, monthTitle } = useI18n()
+    const gesture = usePaintGesture()
 
     const days = computed(() =>
       Array.from({ length: getDaysInMonth(state.viewYear, state.viewMonth) }, (_, i) => i + 1),
@@ -21,50 +23,16 @@ export default {
     const slotIndices = Array.from({ length: SlotsPerDay }, (_, i) => i)
     const hourLabels = Array.from({ length: SlotsPerDay / 2 }, (_, i) => i)
 
-    const painting = ref(false)
-    // Day the current paint drag started on; a drag only paints within this row.
-    let paintDay = null
-    // Touch tap waiting for pointerup; cancelled if the browser starts scrolling instead.
-    let pendingTap = null
     const tooltip = ref({ visible: false, x: 0, y: 0, text: '' })
     // Cell currently under the pointer, used to highlight its row and column.
     const hover = ref({ day: null, slot: null })
 
-    // Find the slot cell under a pointer position.
-    function cellAt(clientX, clientY) {
-      const el = document.elementFromPoint(clientX, clientY)
-      const cell = el?.closest?.('[data-slot]')
-      if (!cell) return null
-      return { day: Number(cell.dataset.day), slot: Number(cell.dataset.slot) }
-    }
-
-    function onPointerDown(event) {
-      if (event.button !== 0) return
-      const cell = cellAt(event.clientX, event.clientY)
-      if (!cell) return
-      // Touch without drag-paint: wait for pointerup so a swipe scrolls instead of painting.
-      if (event.pointerType === 'touch' && !state.touchDragPaint) {
-        pendingTap = cell
-        return
-      }
-      if (state.activeTool.kind === 'icon') {
-        applyActiveTool(state.viewYear, state.viewMonth, cell.day, cell.slot)
-        return
-      }
-      painting.value = true
-      paintDay = cell.day
-      applyActiveTool(state.viewYear, state.viewMonth, cell.day, cell.slot)
-    }
-
     function onPointerMove(event) {
-      const cell = cellAt(event.clientX, event.clientY)
+      const cell = gesture.onPointerMove(event)
       if (!cell) {
         tooltip.value.visible = false
         hover.value = { day: null, slot: null }
         return
-      }
-      if (painting.value && state.activeTool.kind !== 'icon' && cell.day === paintDay) {
-        applyActiveTool(state.viewYear, state.viewMonth, cell.day, cell.slot)
       }
       if (hover.value.day !== cell.day || hover.value.slot !== cell.slot) {
         hover.value = { day: cell.day, slot: cell.slot }
@@ -78,38 +46,8 @@ export default {
       }
     }
 
-    function stopPainting() {
-      painting.value = false
-      paintDay = null
-    }
-
-    // A lifted touch that never turned into a scroll counts as a tap (tapping a filled slot clears it).
-    function onPointerUp() {
-      if (pendingTap) {
-        tapActiveTool(state.viewYear, state.viewMonth, pendingTap.day, pendingTap.slot)
-        pendingTap = null
-      }
-      stopPainting()
-    }
-
-    function onPointerCancel() {
-      pendingTap = null
-      stopPainting()
-    }
-
-    // Right-click a painted slot to erase it (fill only, mirroring the eraser tool).
-    function onContextMenu(event) {
-      const cell = cellAt(event.clientX, event.clientY)
-      if (!cell) return
-      event.preventDefault()
-      if (getSlotState(state.viewYear, state.viewMonth, cell.day, cell.slot) === SlotState.Empty) return
-      setSlotState(state.viewYear, state.viewMonth, cell.day, cell.slot, SlotState.Empty)
-    }
-
     function onPointerLeave() {
-      pendingTap = null
-      painting.value = false
-      paintDay = null
+      gesture.onPointerLeave()
       tooltip.value.visible = false
       hover.value = { day: null, slot: null }
     }
@@ -123,11 +61,11 @@ export default {
       hourLabels,
       tooltip,
       hover,
-      onPointerDown,
+      onPointerDown: gesture.onPointerDown,
       onPointerMove,
-      onPointerUp,
-      onPointerCancel,
-      onContextMenu,
+      onPointerUp: gesture.onPointerUp,
+      onPointerCancel: gesture.onPointerCancel,
+      onContextMenu: gesture.onContextMenu,
       onPointerLeave,
     }
   },
