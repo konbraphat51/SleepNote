@@ -22,7 +22,13 @@ function createEmptyMonth() {
 
 // Build an empty diary document.
 function createEmptyDiary() {
-  return { version: DiaryVersion, months: {} }
+  return { version: DiaryVersion, months: {}, customLabels: {} }
+}
+
+// Fill in any field an older document (or imported file) may be missing.
+function normalizeDiary(diary) {
+  if (!diary.customLabels) diary.customLabels = {}
+  return diary
 }
 
 // Read the diary document from the cookie, or a fresh one on any error.
@@ -31,7 +37,7 @@ function loadDiary() {
   if (!raw) return createEmptyDiary()
   try {
     const parsed = JSON.parse(raw)
-    if (parsed && parsed.version === DiaryVersion && parsed.months) return parsed
+    if (parsed && parsed.version === DiaryVersion && parsed.months) return normalizeDiary(parsed)
   } catch {
     // Malformed payload — start over.
   }
@@ -204,6 +210,22 @@ function setNote(year, monthIndex, day, text) {
   saveDiary()
 }
 
+// Read a user-defined fill label (empty string when the user kept the default).
+function getCustomLabel(stateKey) {
+  return state.diary.customLabels?.[stateKey] ?? ''
+}
+
+// Set (or clear) a user-defined fill label and persist.
+function setCustomLabel(stateKey, text) {
+  markDirty()
+  if (!state.diary.customLabels) state.diary.customLabels = {}
+  const labels = state.diary.customLabels
+  const value = text ?? ''
+  if (value.trim() === '') delete labels[stateKey]
+  else labels[stateKey] = value
+  saveDiary()
+}
+
 // List the icons placed on one slot.
 function getIconsAt(year, monthIndex, day, slotIndex) {
   const month = state.diary.months[formatMonthKey(year, monthIndex)]
@@ -271,7 +293,7 @@ function exportJson() {
 function importJson(text) {
   const parsed = JSON.parse(text)
   if (!parsed || parsed.version !== DiaryVersion || !parsed.months) throw new Error('invalid diary')
-  state.diary = parsed
+  state.diary = normalizeDiary(parsed)
   resetHistory()
   saveDiary()
 }
@@ -293,6 +315,8 @@ export function useDiaryStore() {
     setSlotState,
     getNote,
     setNote,
+    getCustomLabel,
+    setCustomLabel,
     getIconsAt,
     toggleIconAt,
     applyActiveTool,

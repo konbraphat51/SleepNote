@@ -12,6 +12,9 @@ export const SlotState = Object.freeze({
   AwakeInBed: 'awakeInBed',
   Sleep: 'sleep',
   Sleepiness: 'sleepiness',
+  Custom1: 'custom1',
+  Custom2: 'custom2',
+  Custom3: 'custom3',
 })
 
 // Single-character encoding used to keep the JSON/Cookie payload compact.
@@ -20,6 +23,9 @@ export const SlotStateChar = Object.freeze({
   [SlotState.AwakeInBed]: 'A',
   [SlotState.Sleep]: 'S',
   [SlotState.Sleepiness]: 'D',
+  [SlotState.Custom1]: '1',
+  [SlotState.Custom2]: '2',
+  [SlotState.Custom3]: '3',
 })
 
 // Inverse of SlotStateChar, used when decoding a stored row.
@@ -28,6 +34,9 @@ export const CharSlotState = Object.freeze({
   A: SlotState.AwakeInBed,
   S: SlotState.Sleep,
   D: SlotState.Sleepiness,
+  '1': SlotState.Custom1,
+  '2': SlotState.Custom2,
+  '3': SlotState.Custom3,
 })
 
 // Icons that can be placed on a specific slot.
@@ -36,9 +45,18 @@ export const IconType = Object.freeze({
   Meal: 'meal',
 })
 
-// The three fill styles, in display order for the toolbar and legend.
+// User-defined fills: the same paint mechanism as the fixed fills, but the
+// meaning (and therefore the label) is chosen by the user.
+export const CustomFillStates = Object.freeze([
+  SlotState.Custom1,
+  SlotState.Custom2,
+  SlotState.Custom3,
+])
+
+// The fill styles, in display order for the toolbar and legend.
 export const FillStates = Object.freeze([
   SlotState.Sleep,
   SlotState.AwakeInBed,
   SlotState.Sleepiness,
+  ...CustomFillStates,
 ])
