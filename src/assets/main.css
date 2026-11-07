@@ -120,7 +120,7 @@ button {
  *   sleep        = solid
  *   awake in bed = diagonal hatch
  *   sleepiness   = dots
- *   custom 1/2/3 = cross-hatch / vertical stripes / checkerboard (user-defined meaning)
+ *   custom 1/2/3 = horizontal bars / vertical stripes / checkerboard (user-defined meaning)
  */
 .fill-sleep {
   background-color: var(--fill-sleep);
@@ -146,9 +146,7 @@ button {
 /* User-defined fills. Patterns stay distinct from the fixed fills when printed. */
 .fill-custom1 {
   background-color: var(--fill-custom1-bg);
-  background-image:
-    repeating-linear-gradient(45deg, var(--fill-custom1-line) 0 1px, transparent 1px 4px),
-    repeating-linear-gradient(-45deg, var(--fill-custom1-line) 0 1px, transparent 1px 4px);
+  background-image: repeating-linear-gradient(0deg, var(--fill-custom1-line) 0 2px, transparent 2px 6px);
 }
 
 .fill-custom2 {
